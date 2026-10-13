@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>內銷客戶追蹤週報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14303F; --ink-2:#4B6270; --paper:#F2F5F6; --card:#FFFFFF; --line:#D3DCE0;
+  --late:#B4412F; --late-bg:#F6E3DF; --warn:#B07A12; --warn-bg:#F7EDD6;
+  --ok:#3D7D60; --ok-bg:#E0EFE7; --irr:#6E7F88; --irr-bg:#E6EBED; --sel:#14303F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#E4ECEF; --ink-2:#9FB2BB; --paper:#0F1E26; --card:#162A34; --line:#2A414C;
+  --late:#E58B78; --late-bg:#3A221E; --warn:#E2B85C; --warn-bg:#3A301A;
+  --ok:#7CC2A0; --ok-bg:#1C3429; --irr:#9AAAB2; --irr-bg:#23343C; --sel:#E4ECEF;}}
+:root[data-theme="dark"]{
+  --ink:#E4ECEF; --ink-2:#9FB2BB; --paper:#0F1E26; --card:#162A34; --line:#2A414C;
+  --late:#E58B78; --late-bg:#3A221E; --warn:#E2B85C; --warn-bg:#3A301A;
+  --ok:#7CC2A0; --ok-bg:#1C3429; --irr:#9AAAB2; --irr-bg:#23343C; --sel:#E4ECEF;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px;line-height:1.6;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+header h1{font-size:28px;font-weight:700;margin:0 0 6px;letter-spacing:.02em}
+header p{margin:0;color:var(--ink-2)}
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);
+  padding:14px 0;margin:20px 0 8px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  padding:6px 14px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--sel);color:var(--paper);border-color:var(--sel)}
+.filters button:focus-visible,.tabs button:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+section{margin-top:40px}
+h2{font-size:20px;margin:0 0 4px}
+.sub{color:var(--ink-2);margin:0 0 16px;font-size:14px}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:500;color:var(--ink-2);font-size:13px;background:var(--card);position:sticky;top:0}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right}
+tr.total td{font-weight:700}
+tr.rep-first td{border-top:2px solid var(--line)}
+td.rep{font-weight:700}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;font-weight:500}
+.t-逾期,.t-停單{color:var(--late);background:var(--late-bg)}
+.t-注意,.t-量下滑{color:var(--warn);background:var(--warn-bg)}
+.t-正常,.t-持平／成長{color:var(--ok);background:var(--ok-bg)}
+.t-不定期,.t-新增／回流{color:var(--irr);background:var(--irr-bg)}
+.tabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:14px;border:none;background:none;color:var(--ink-2);
+  padding:4px 2px;margin-right:12px;cursor:pointer;border-bottom:2px solid transparent}
+.tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+footer{margin-top:48px;color:var(--ink-2);font-size:13px;max-width:72ch}
+footer p{margin:0 0 6px}
+.empty{padding:20px;color:var(--ink-2)}
+@media (max-width:600px){header h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>內銷客戶追蹤週報</h1>
+    <p id="meta"></p>
+  </header>
+
+  <nav class="filters" id="repFilter" aria-label="依業務篩選"></nav>
+
+  <section>
+    <h2>本週客戶動態</h2>
+    <p class="sub" id="weekSub"></p>
+    <div class="scroll"><table id="sumTbl"></table></div>
+  </section>
+
+  <section>
+    <h2>客戶明細</h2>
+    <p class="sub">每家客戶以其主要交易單位判斷狀態；有多種單位者一併列出。</p>
+    <div class="scroll"><table id="detTbl"></table></div>
+  </section>
+
+  <section>
+    <h2>下單節奏</h2>
+    <p class="sub" id="cycSub"></p>
+    <div class="tabs" id="stFilter" role="group" aria-label="依狀態篩選"></div>
+    <div class="scroll"><table id="cycTbl"></table></div>
+  </section>
+
+  <section>
+    <h2>不定期大客戶</h2>
+    <p class="sub">今年下單不到 4 次、營收 60 萬以上，沒有固定週期，依未下單天數列出。</p>
+    <div class="scroll"><table id="irrTbl"></table></div>
+  </section>
+
+  <footer>
+    <p>下單週期：今年各次下單日之間相隔天數的中位數，代表這家客戶平常多久下一次單。</p>
+    <p>狀態：未下單天數在一個週期內為正常，超過一個週期為注意，超過兩個週期為逾期。</p>
+    <p id="excl"></p>
+  </footer>
+</div>
+
+<script>
+const DATA = {"ref": "2026/10/12", "week": {"lw": "09/29–10/05", "tw": "10/06–10/12", "lw_days": 5, "tw_days": 4}, "weekly": [{"rep": "楊正國", "c": "佳鮮國際", "st": "新增／回流", "lw": "0", "tw": "300 尾", "chg": "—", "lw_amt": 0, "tw_amt": 29925}, {"rep": "邱意涵", "c": "偉儒國際", "st": "停單", "lw": "10 公斤", "tw": "0", "chg": "-100%", "lw_amt": 6773, "tw_amt": 0}, {"rep": "楊正國", "c": "台灣善商", "st": "量下滑", "lw": "360 公斤", "tw": "220 公斤", "chg": "-38.9%", "lw_amt": 205500, "tw_amt": 135300}, {"rep": "楊正國", "c": "君臨商行", "st": "量下滑", "lw": "6 公斤", "tw": "3 公斤", "chg": "-50.0%", "lw_amt": 4221, "tw_amt": 2111}, {"rep": "呂紀萱", "c": "品臻國際行銷", "st": "停單", "lw": "192 包", "tw": "0", "chg": "-100%", "lw_amt": 14160, "tw_amt": 0}, {"rep": "楊正國", "c": "唯特水產", "st": "停單", "lw": "872 公斤", "tw": "0", "chg": "-100%", "lw_amt": 135160, "tw_amt": 0}, {"rep": "楊正國", "c": "大富開發", "st": "持平／成長", "lw": "20 公斤", "tw": "20 公斤", "chg": "+0.0%", "lw_amt": 10000, "tw_amt": 10000}, {"rep": "陳彥竹", "c": "尚濱漁行", "st": "新增／回流", "lw": "0", "tw": "160 公斤", "chg": "—", "lw_amt": 0, "tw_amt": 5600}, {"rep": "楊正國", "c": "東大興食品", "st": "停單", "lw": "705 公斤", "tw": "0", "chg": "-100%", "lw_amt": 74025, "tw_amt": 0}, {"rep": "楊正國", "c": "沐陞", "st": "停單", "lw": "53.45 公斤", "tw": "0", "chg": "-100%", "lw_amt": 45855, "tw_amt": 0}, {"rep": "楊正國", "c": "海鉅國際", "st": "新增／回流", "lw": "0", "tw": "40 公斤", "chg": "—", "lw_amt": 0, "tw_amt": 4320}, {"rep": "呂紀萱", "c": "華膳空廚", "st": "停單", "lw": "117 公斤", "tw": "0", "chg": "-100%", "lw_amt": 157950, "tw_amt": 0}, {"rep": "楊正國", "c": "那波麗士(合點壽司)", "st": "持平／成長", "lw": "127.5 公斤＋25 包", "tw": "193.5 公斤＋74 包", "chg": "+51.8%／+196.0%", "lw_amt": 98241, "tw_amt": 167160}, {"rep": "呂家妤", "c": "金有福國際", "st": "新增／回流", "lw": "0", "tw": "9.08 公斤", "chg": "—", "lw_amt": 0, "tw_amt": 17434}, {"rep": "陳彥竹", "c": "鉑金溫泉事業", "st": "停單", "lw": "15 盒＋6 公斤", "tw": "0", "chg": "-100%", "lw_amt": 7970, "tw_amt": 0}], "cycle_range": "2026/01/01–2026/10/12", "cycles": [{"rep": "楊正國", "c": "DATON FISHERY CORP", "n": 1, "cyc": null, "last": "04/30", "since": 165, "st": "不定期", "amt": 67}, {"rep": "楊正國", "c": "上雋水產", "n": 1, "cyc": null, "last": "06/17", "since": 117, "st": "不定期", "amt": 98}, {"rep": "楊正國", "c": "佳鮮國際", "n": 26, "cyc": 4.0, "last": "10/07", "since": 5, "st": "注意", "amt": 5801}, {"rep": "邱意涵", "c": "偉儒國際", "n": 5, "cyc": 32.5, "last": "09/30", "since": 12, "st": "正常", "amt": 3}, {"rep": "呂家妤", "c": "優質家企業", "n": 9, "cyc": 1.0, "last": "08/21", "since": 52, "st": "逾期", "amt": 27}, {"rep": "呂家妤", "c": "全家便利商店", "n": 10, "cyc": 2.0, "last": "01/23", "since": 262, "st": "逾期", "amt": 40}, {"rep": "陳彥竹", "c": "劉家淮魯", "n": 18, "cyc": 12.0, "last": "09/01", "since": 41, "st": "逾期", "amt": 100}, {"rep": "楊正國", "c": "匯永實業", "n": 44, "cyc": 4.0, "last": "09/01", "since": 41, "st": "逾期", "amt": 1233}, {"rep": "楊正國", "c": "南六企業", "n": 2, "cyc": null, "last": "04/09", "since": 186, "st": "不定期", "amt": 124}, {"rep": "楊正國", "c": "口湖漁類生產合作社", "n": 4, "cyc": 22.0, "last": "08/25", "since": 48, "st": "逾期", "amt": 63}, {"rep": "楊正國", "c": "台灣善商", "n": 83, "cyc": 2.0, "last": "10/12", "since": 0, "st": "正常", "amt": 920}, {"rep": "邱意涵", "c": "台灣西原商會", "n": 36, "cyc": 7.0, "last": "09/22", "since": 20, "st": "逾期", "amt": 85}, {"rep": "楊正國", "c": "君臨商行", "n": 50, "cyc": 5.0, "last": "10/08", "since": 4, "st": "正常", "amt": 15}, {"rep": "邱意涵", "c": "味一食品", "n": 4, "cyc": 21.0, "last": "08/17", "since": 56, "st": "逾期", "amt": 184}, {"rep": "呂紀萱", "c": "品臻國際行銷", "n": 4, "cyc": 19.0, "last": "09/30", "since": 12, "st": "正常", "amt": 5}, {"rep": "楊正國", "c": "唯特水產", "n": 27, "cyc": 7.0, "last": "10/01", "since": 11, "st": "注意", "amt": 497}, {"rep": "楊正國", "c": "啟新事業", "n": 23, "cyc": 12.5, "last": "09/21", "since": 21, "st": "注意", "amt": 776}, {"rep": "楊正國", "c": "嘉緯水產", "n": 4, "cyc": 6.0, "last": "01/27", "since": 258, "st": "逾期", "amt": 48}, {"rep": "呂家妤", "c": "在蒂", "n": 7, "cyc": 1.5, "last": "07/16", "since": 88, "st": "逾期", "amt": 111}, {"rep": "楊正國", "c": "大富開發", "n": 40, "cyc": 6.0, "last": "10/07", "since": 5, "st": "正常", "amt": 26}, {"rep": "楊正國", "c": "天海漁業", "n": 7, "cyc": 37.5, "last": "08/26", "since": 47, "st": "注意", "amt": 3}, {"rep": "楊正國", "c": "富明國際企業", "n": 5, "cyc": 26.5, "last": "08/27", "since": 46, "st": "注意", "amt": 1621}, {"rep": "陳彥竹", "c": "尚濱漁行", "n": 7, "cyc": 14.0, "last": "10/06", "since": 6, "st": "正常", "amt": 6}, {"rep": "楊正國", "c": "建榮冷凍食品", "n": 3, "cyc": null, "last": "05/20", "since": 145, "st": "不定期", "amt": 62}, {"rep": "楊正國", "c": "戎的魚店", "n": 4, "cyc": 29.0, "last": "09/05", "since": 37, "st": "注意", "amt": 837}, {"rep": "楊正國", "c": "晉恩軒", "n": 29, "cyc": 7.0, "last": "07/17", "since": 87, "st": "逾期", "amt": 42}, {"rep": "呂紀萱", "c": "桑鴻賓", "n": 6, "cyc": 2.0, "last": "08/19", "since": 54, "st": "逾期", "amt": 1}, {"rep": "呂家妤", "c": "楊沐穎", "n": 6, "cyc": 3.0, "last": "02/11", "since": 243, "st": "逾期", "amt": 8}, {"rep": "楊正國", "c": "沐陞", "n": 37, "cyc": 6.0, "last": "10/05", "since": 7, "st": "注意", "amt": 61}, {"rep": "楊正國", "c": "海鉅國際", "n": 4, "cyc": 5.0, "last": "10/06", "since": 6, "st": "注意", "amt": 21}, {"rep": "陳彥竹", "c": "湧鮮國際", "n": 5, "cyc": 22.0, "last": "09/17", "since": 25, "st": "注意", "amt": 51}, {"rep": "楊正國", "c": "笑福庵", "n": 3, "cyc": null, "last": "04/28", "since": 167, "st": "不定期", "amt": 977}, {"rep": "呂家妤", "c": "筱豆", "n": 10, "cyc": 1.0, "last": "04/29", "since": 166, "st": "逾期", "amt": 6}, {"rep": "陳彥竹", "c": "自力耕生", "n": 3, "cyc": null, "last": "08/05", "since": 68, "st": "不定期", "amt": 162}, {"rep": "楊正國", "c": "興毅冷凍食品工業", "n": 2, "cyc": null, "last": "08/20", "since": 53, "st": "不定期", "amt": 98}, {"rep": "楊正國", "c": "菄海實業", "n": 14, "cyc": 8.0, "last": "09/24", "since": 18, "st": "逾期", "amt": 111}, {"rep": "楊正國", "c": "裕鋒水產", "n": 1, "cyc": null, "last": "01/30", "since": 255, "st": "不定期", "amt": 81}, {"rep": "楊正國", "c": "那波麗士(合點壽司)", "n": 71, "cyc": 3.0, "last": "10/12", "since": 0, "st": "正常", "amt": 455}, {"rep": "邱意涵", "c": "金御賞", "n": 3, "cyc": null, "last": "09/08", "since": 34, "st": "不定期", "amt": 416}, {"rep": "呂家妤", "c": "金有福國際", "n": 15, "cyc": 9.0, "last": "10/08", "since": 4, "st": "正常", "amt": 37}, {"rep": "陳彥竹", "c": "閎洋貿易", "n": 10, "cyc": 10.0, "last": "09/24", "since": 18, "st": "注意", "amt": 96}, {"rep": "楊正國", "c": "阿官國際餐飲", "n": 4, "cyc": 58.0, "last": "08/19", "since": 54, "st": "正常", "amt": 3}, {"rep": "楊正國", "c": "順漾水產", "n": 13, "cyc": 10.0, "last": "09/08", "since": 34, "st": "逾期", "amt": 818}, {"rep": "呂家妤", "c": "鮨己越", "n": 10, "cyc": 14.0, "last": "07/28", "since": 76, "st": "逾期", "amt": 1}], "exclude": ["辦公經費", "零售", "呂友助", "正洋電商", "業務 黃啓靖"]};
+const ORDER_W = ["停單","量下滑","持平／成長","新增／回流"];
+const ORDER_C = {"逾期":0,"注意":1,"正常":2};
+let rep = "全部", st = "全部";
+
+const repTotals = {};
+DATA.cycles.forEach(r => repTotals[r.rep] = (repTotals[r.rep]||0) + r.amt);
+DATA.weekly.forEach(r => repTotals[r.rep] = repTotals[r.rep] || 0);
+const REPS = Object.keys(repTotals).sort((a,b) => repTotals[b]-repTotals[a]);
+
+const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const tag = s => `<span class="tag t-${s}">${s}</span>`;
+const wan = n => n.toLocaleString("zh-TW");
+const pick = rows => rep === "全部" ? rows : rows.filter(r => r.rep === rep);
+
+function grouped(rows, sorter, rowHtml){
+  let html = "", prev = null;
+  REPS.forEach(p => {
+    const g = rows.filter(r => r.rep === p).sort(sorter);
+    g.forEach((r,i) => {
+      html += `<tr class="${i===0 && prev ? "rep-first":""}"><td class="rep">${i===0?esc(p):""}</td>${rowHtml(r)}</tr>`;
+    });
+    if (g.length) prev = p;
+  });
+  return html;
+}
+
+function renderMeta(){
+  const w = DATA.week;
+  document.getElementById("meta").textContent =
+    `資料截止 ${DATA.ref}；上週 ${w.lw}（出貨 ${w.lw_days} 天），本週 ${w.tw}（出貨 ${w.tw_days} 天）`;
+  document.getElementById("weekSub").textContent =
+    "上週有出貨的客戶中，本週停單或出貨量變少的比例。";
+  document.getElementById("cycSub").textContent =
+    `統計期間 ${DATA.cycle_range}，今年下單 4 次以上的固定往來客戶。`;
+  document.getElementById("excl").textContent = `未列入分析：${DATA.exclude.join("、")}。`;
+}
+
+function renderFilters(){
+  const f = document.getElementById("repFilter");
+  f.innerHTML = ["全部",...REPS].map(p =>
+    `<button type="button" aria-pressed="${p===rep}" data-rep="${esc(p)}">${esc(p)}</button>`).join("");
+  f.onclick = e => { const b = e.target.closest("button"); if(!b) return; rep = b.dataset.rep; render(); };
+  const s = document.getElementById("stFilter");
+  s.innerHTML = ["全部","逾期","注意","正常"].map(x =>
+    `<button type="button" aria-pressed="${x===st}" data-st="${x}">${x}</button>`).join("");
+  s.onclick = e => { const b = e.target.closest("button"); if(!b) return; st = b.dataset.st; render(); };
+}
+
+function renderSummary(){
+  const rows = pick(DATA.weekly);
+  const reps = REPS.filter(p => rows.some(r => r.rep === p));
+  const calc = list => {
+    const c = k => list.filter(r => r.st === k).length;
+    const prevActive = c("停單") + c("量下滑") + c("持平／成長");
+    const down = c("停單") + c("量下滑");
+    return {prevActive, stop:c("停單"), dec:c("量下滑"), nw:c("新增／回流"),
+      pct: prevActive ? Math.round(down/prevActive*100)+"%" : "—"};
+  };
+  const line = (name, s, cls="") => `<tr class="${cls}"><td class="${cls?"":"rep"}">${name}</td>
+    <td class="num">${s.prevActive} 家</td><td class="num">${s.prevActive?s.stop:"—"}</td>
+    <td class="num">${s.prevActive?s.dec:"—"}</td><td class="num">${s.pct}</td><td class="num">${s.nw}</td></tr>`;
+  let html = `<thead><tr><th>業務</th><th class="num">上週有出貨客戶</th><th class="num">本週停單</th>
+    <th class="num">本週量下滑</th><th class="num">下滑比例</th><th class="num">本週新增／回流</th></tr></thead><tbody>`;
+  reps.forEach(p => html += line(esc(p), calc(rows.filter(r => r.rep === p))));
+  if (reps.length > 1) html += line("合計", calc(rows), "total");
+  if (!reps.length) html += `<tr><td colspan="6" class="empty">這位業務兩週內沒有出貨紀錄。</td></tr>`;
+  document.getElementById("sumTbl").innerHTML = html + "</tbody>";
+}
+
+function renderDetail(){
+  const rows = pick(DATA.weekly);
+  let html = `<thead><tr><th>業務</th><th>狀態</th><th>客戶</th><th>上週</th><th>本週</th><th>變化</th>
+    <th class="num">上週金額</th><th class="num">本週金額</th></tr></thead><tbody>`;
+  html += grouped(rows, (a,b) => ORDER_W.indexOf(a.st)-ORDER_W.indexOf(b.st) || b.lw_amt-a.lw_amt, r =>
+    `<td>${tag(r.st)}</td><td>${esc(r.c)}</td><td>${esc(r.lw)}</td><td>${esc(r.tw)}</td>
+     <td>${esc(r.chg)}</td><td class="num">${wan(r.lw_amt)}</td><td class="num">${wan(r.tw_amt)}</td>`);
+  if (!rows.length) html += `<tr><td colspan="8" class="empty">這位業務兩週內沒有出貨紀錄。</td></tr>`;
+  document.getElementById("detTbl").innerHTML = html + "</tbody>";
+}
+
+function renderCycles(){
+  let rows = pick(DATA.cycles).filter(r => r.st !== "不定期");
+  if (st !== "全部") rows = rows.filter(r => r.st === st);
+  let html = `<thead><tr><th>業務</th><th>客戶</th><th class="num">今年下單次數</th><th class="num">下單週期(天)</th>
+    <th>最後下單</th><th class="num">未下單天數</th><th>狀態</th><th class="num">今年營收(萬)</th></tr></thead><tbody>`;
+  html += grouped(rows, (a,b) => ORDER_C[a.st]-ORDER_C[b.st] || b.amt-a.amt, r =>
+    `<td>${esc(r.c)}</td><td class="num">${r.n}</td><td class="num">${r.cyc}</td><td>${r.last}</td>
+     <td class="num">${r.since}</td><td>${tag(r.st)}</td><td class="num">${wan(r.amt)}</td>`);
+  if (!rows.length) html += `<tr><td colspan="8" class="empty">沒有符合條件的客戶。</td></tr>`;
+  document.getElementById("cycTbl").innerHTML = html + "</tbody>";
+}
+
+function renderIrregular(){
+  const rows = pick(DATA.cycles).filter(r => r.st === "不定期");
+  let html = `<thead><tr><th>業務</th><th>客戶</th><th class="num">今年下單次數</th><th>最後下單</th>
+    <th class="num">未下單天數</th><th class="num">今年營收(萬)</th></tr></thead><tbody>`;
+  html += grouped(rows, (a,b) => b.amt-a.amt, r =>
+    `<td>${esc(r.c)}</td><td class="num">${r.n}</td><td>${r.last}</td>
+     <td class="num">${r.since}</td><td class="num">${wan(r.amt)}</td>`);
+  if (!rows.length) html += `<tr><td colspan="6" class="empty">沒有符合條件的客戶。</td></tr>`;
+  document.getElementById("irrTbl").innerHTML = html + "</tbody>";
+}
+
+function render(){ renderFilters(); renderSummary(); renderDetail(); renderCycles(); renderIrregular(); }
+renderMeta(); render();
+</script>
+</body>
+</html>
