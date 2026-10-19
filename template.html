@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>內銷週報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14303F; --ink-2:#4B6270; --paper:#F2F5F6; --card:#FFFFFF; --line:#D3DCE0;
+  --late:#B4412F; --late-bg:#F6E3DF; --warn:#B07A12; --warn-bg:#F7EDD6;
+  --ok:#3D7D60; --ok-bg:#E0EFE7; --irr:#6E7F88; --irr-bg:#E6EBED; --sel:#14303F; --bar:#2F6F8F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#E4ECEF; --ink-2:#9FB2BB; --paper:#0F1E26; --card:#162A34; --line:#2A414C;
+  --late:#E58B78; --late-bg:#3A221E; --warn:#E2B85C; --warn-bg:#3A301A;
+  --ok:#7CC2A0; --ok-bg:#1C3429; --irr:#9AAAB2; --irr-bg:#23343C; --sel:#E4ECEF; --bar:#6FB3D2;}}
+:root[data-theme="dark"]{
+  --ink:#E4ECEF; --ink-2:#9FB2BB; --paper:#0F1E26; --card:#162A34; --line:#2A414C;
+  --late:#E58B78; --late-bg:#3A221E; --warn:#E2B85C; --warn-bg:#3A301A;
+  --ok:#7CC2A0; --ok-bg:#1C3429; --irr:#9AAAB2; --irr-bg:#23343C; --sel:#E4ECEF; --bar:#6FB3D2;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px;line-height:1.6;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+header h1{font-size:28px;font-weight:700;margin:0 0 4px;letter-spacing:.02em}
+header p{margin:0;color:var(--ink-2)}
+section{margin-top:40px}
+h2{font-size:19px;margin:0 0 14px;display:flex;align-items:baseline;gap:10px}
+h2 .no{font-size:13px;font-weight:700;color:var(--paper);background:var(--ink);border-radius:4px;padding:1px 7px}
+.sub{color:var(--ink-2);margin:0 0 14px;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card .lbl{font-size:13px;color:var(--ink-2)}
+.card .val{font-size:30px;font-weight:700;line-height:1.25;margin-top:4px}
+.card .val small{font-size:15px;font-weight:500;margin-left:2px}
+.card .note{font-size:13px;color:var(--ink-2);margin-top:4px}
+.card.key{border-color:var(--ink)}
+.chg-neg{color:var(--late)} .chg-pos{color:var(--ok)}
+.progress{position:relative;height:10px;border-radius:5px;background:var(--paper);margin-top:12px;overflow:visible}
+.progress i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--bar)}
+.progress b{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.legend{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-top:6px}
+.lead{background:var(--card);border-left:4px solid var(--ink);border-radius:0 10px 10px 0;padding:12px 16px;margin:0 0 16px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.filters button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  padding:4px 13px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--sel);color:var(--paper);border-color:var(--sel)}
+.filters button:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%}
+#pvTbl{min-width:900px}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:500;color:var(--ink-2);font-size:13px}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right}
+tr.total td{font-weight:700;background:var(--paper)}
+tr.sub td{font-weight:700}
+tr.cust-first td{border-top:2px solid var(--line)}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;font-weight:500}
+.t-停購,.t-停單{color:var(--late);background:var(--late-bg)}
+.t-減量{color:var(--warn);background:var(--warn-bg)}
+.t-增量{color:var(--ok);background:var(--ok-bg)}
+.t-新增品項,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
+.neg{color:var(--late)} .pos{color:var(--ok)}
+.two{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:12px;margin-bottom:16px;align-items:start}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+footer{margin-top:48px;color:var(--ink-2);font-size:13px;max-width:76ch}
+footer p{margin:0 0 6px}
+.empty{padding:18px;color:var(--ink-2)}
+@media (max-width:600px){header h1{font-size:23px}.card .val{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>內銷週報</h1>
+    <p id="meta"></p>
+  </header>
+
+  <section>
+    <h2><span class="no">1</span>本週銷售額</h2>
+    <div class="cards" id="weekCards"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">2</span>月銷售額與完成率</h2>
+    <div class="cards" id="monthCards"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">3</span>本週客戶動態：銷售額下滑客戶價量分析</h2>
+    <p class="lead" id="pvLead"></p>
+    <nav class="filters" id="repFilter" aria-label="依業務篩選"></nav>
+    <div class="two">
+      <div class="scroll"><table id="pvSum"></table></div>
+      <div class="scroll"><table id="custSum"></table></div>
+    </div>
+    <div class="scroll"><table id="pvTbl"></table></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const H = DATA.head, PV = DATA.pv;
+let rep = "全部";
+
+const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const wan = n => (n/1e4).toLocaleString("zh-TW",{minimumFractionDigits:1,maximumFractionDigits:1});
+const yuan = n => Math.round(n).toLocaleString("zh-TW");
+const pctTxt = (a,b) => b ? ((a/b-1)*100) : null;
+const chg = v => v === null ? "—" : `<span class="${v<0?"chg-neg":"chg-pos"}">${v>0?"+":""}${v.toFixed(1)}%</span>`;
+const sgn = n => n < 0 ? `<span class="neg">${yuan(n)}</span>` : n > 0 ? `<span class="pos">+${yuan(n)}</span>` : "0";
+const num = v => v === null ? "—" : v.toLocaleString("zh-TW",{maximumFractionDigits:2});
+const tag = s => `<span class="tag t-${s}">${s}</span>`;
+const card = (lbl,val,note,cls="") => `<div class="card ${cls}"><div class="lbl">${lbl}</div><div class="val">${val}</div>${note?`<div class="note">${note}</div>`:""}</div>`;
+
+function renderHead(){
+  document.getElementById("meta").textContent = `資料截止 ${DATA.ref}｜內銷（新台幣）`;
+  const w = pctTxt(H.tw, H.lw);
+  document.getElementById("weekCards").innerHTML =
+    card(`本週銷售額（${H.tw_range}）`, `${wan(H.tw)}<small>萬</small>`, `${yuan(H.tw)} 元`, "key") +
+    card(`上週銷售額（${H.lw_range}）`, `${wan(H.lw)}<small>萬</small>`, `${yuan(H.lw)} 元`) +
+    card("變動比例", chg(w), `${H.tw>=H.lw?"增加":"減少"} ${wan(Math.abs(H.tw-H.lw))} 萬`);
+
+  const rate = H.target ? H.mtd/H.target : 0, time = H.days_passed/H.days_in_month;
+  const prog = `<div class="progress" role="img" aria-label="完成率 ${(rate*100).toFixed(1)}%，時間進度 ${(time*100).toFixed(0)}%">
+      <i style="width:${Math.min(rate,1)*100}%"></i><b style="left:${time*100}%"></b></div>
+    <div class="legend"><span>完成 ${(rate*100).toFixed(1)}%</span><span>時間進度 ${(time*100).toFixed(0)}%（${H.days_passed}/${H.days_in_month} 天）</span></div>`;
+  document.getElementById("monthCards").innerHTML =
+    card(`上月銷售額（${H.pm_label}）`, `${wan(H.pm)}<small>萬</small>`, `${yuan(H.pm)} 元`) +
+    card(`本月累計銷售額（${H.mtd_range}）`, `${wan(H.mtd)}<small>萬</small>`, `${yuan(H.mtd)} 元`, "key") +
+    `<div class="card"><div class="lbl">完成率</div><div class="val">${(rate*100).toFixed(1)}<small>%</small></div>
+      <div class="note">基準：${esc(H.target_basis)} ${wan(H.target)} 萬</div>${prog}</div>`;
+}
+
+const REPS = [...new Set(PV.rows.map(r => r.rep))]
+  .sort((a,b) => PV.rows.filter(r=>r.rep===a).reduce((s,r)=>s+r.diff,0) - PV.rows.filter(r=>r.rep===b).reduce((s,r)=>s+r.diff,0));
+
+function renderPV(){
+  const rows = rep === "全部" ? PV.rows : PV.rows.filter(r => r.rep === rep);
+  const items = rows.flatMap(r => r.items);
+  const total = items.reduce((a,x) => a + x.diff, 0);
+  const priceTot = items.reduce((a,x) => a + x.price, 0);
+  const amt = a => items.filter(x => x.attr === a).reduce((s,x) => s + x.diff - x.price, 0);
+  const cnt = a => items.filter(x => x.attr === a).length;
+  const pct = v => total ? (v/total*100).toFixed(1) + "%" : "—";
+  const stopped = rows.filter(r => r.stopped);
+  const stopAmt = stopped.reduce((s,r)=>s+r.diff,0);
+
+  // 摘要說明
+  const all = PV.rows, allItems = all.flatMap(r=>r.items), allTot = allItems.reduce((a,x)=>a+x.diff,0);
+  const allStop = allItems.filter(x=>x.attr==="停購").reduce((s,x)=>s+x.diff,0);
+  const allPrice = allItems.reduce((a,x)=>a+x.price,0);
+  const top = all[0];
+  document.getElementById("pvLead").innerHTML = all.length ?
+    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家。銷售額下滑的客戶共 <strong>${all.length}</strong> 家，合計減少 <strong>${wan(-allTot)} 萬</strong>；
+     其中停購品項佔 <strong>${allTot?(allStop/allTot*100).toFixed(0):0}%</strong>，價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。
+     下滑最多的是 <strong>${esc(top.c)}</strong>（${esc(top.rep)}），減少 ${wan(-top.diff)} 萬。`
+    : "本週沒有銷售額下滑的客戶。";
+
+  // 業務篩選
+  const f = document.getElementById("repFilter");
+  f.innerHTML = ["全部",...REPS].map(p => `<button type="button" aria-pressed="${p===rep}" data-rep="${esc(p)}">${esc(p)}</button>`).join("");
+  f.onclick = e => { const b = e.target.closest("button"); if(!b) return; rep = b.dataset.rep; renderPV(); };
+
+  // 歸因彙總
+  let s = `<thead><tr><th>歸因</th><th class="num">品項數</th><th class="num">變化金額</th><th class="num">佔比</th></tr></thead><tbody>`;
+  ["停購","減量","增量","新增品項"].forEach(a => s += `<tr><td>${tag(a)}</td><td class="num">${cnt(a)}</td><td class="num">${sgn(amt(a))}</td><td class="num">${pct(amt(a))}</td></tr>`);
+  s += `<tr><td>${tag("價格變動")}</td><td class="num">${items.filter(x=>x.q0>0&&x.q1>0).length}</td><td class="num">${sgn(priceTot)}</td><td class="num">${pct(priceTot)}</td></tr>`;
+  s += `<tr class="total"><td>合計</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td><td class="num">${total?"100.0%":"—"}</td></tr></tbody>`;
+  document.getElementById("pvSum").innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有銷售額下滑的客戶。</td></tr></tbody>`;
+
+  // 客戶彙總
+  let c = `<thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
+  rows.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
+    <td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td class="num">${chg(pctTxt(r.s1,r.s0))}</td></tr>`);
+  if (rows.length) {
+    const s0=rows.reduce((a,r)=>a+r.s0,0), s1=rows.reduce((a,r)=>a+r.s1,0);
+    c += `<tr class="total"><td>合計 ${rows.length} 家（整週停單 ${stopped.length} 家）</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
+  }
+  document.getElementById("custSum").innerHTML = c + "</tbody>";
+
+  // 品項明細
+  let h = `<thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">上週量</th><th class="num">本週量</th>
+    <th class="num">上週單價</th><th class="num">本週單價</th><th class="num">上週金額</th><th class="num">本週金額</th>
+    <th class="num">變化金額</th><th>歸因</th></tr></thead><tbody>`;
+  rows.forEach(r => {
+    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong>`:""}</td><td>${i===0?esc(r.rep):""}</td>
+      <td>${esc(x.item)}</td><td class="num">${x.q0?num(x.q0)+" "+esc(x.unit):"—"}</td><td class="num">${x.q1?num(x.q1)+" "+esc(x.unit):"—"}</td>
+      <td class="num">${num(x.p0)}</td><td class="num">${num(x.p1)}</td><td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
+      <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
+    if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td><td></td><td></td>
+      <td class="num">${yuan(r.s0)}</td><td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td></td></tr>`;
+  });
+  if (!rows.length) h += `<tr><td colspan="11" class="empty">沒有銷售額下滑的客戶。</td></tr>`;
+  document.getElementById("pvTbl").innerHTML = h + "</tbody>";
+}
+
+function renderFoot(){
+  document.getElementById("foot").innerHTML = `
+    <p>第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。</p>
+    <p>本週、上週各為截止日往前 7 天；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>價量分析：停購＝上週有買、本週沒買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價單位依各品項交易單位。</p>`;
+}
+
+renderHead(); renderPV(); renderFoot();
+</script>
+</body>
+</html>
