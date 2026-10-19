@@ -55,7 +55,7 @@ h2 .no{font-size:13px;font-weight:700;color:var(--paper);background:var(--ink);b
 .filters button:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
 .scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
 table{border-collapse:collapse;width:100%}
-#pvTbl{min-width:900px}
+#pvTbl{min-width:760px}
 th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-weight:500;color:var(--ink-2);font-size:13px}
 tr:last-child td{border-bottom:none}
@@ -227,17 +227,17 @@ function renderPV(){
 
   // 品項明細
   let h = `<thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">上週量</th><th class="num">本週量</th>
-    <th class="num">上週單價</th><th class="num">本週單價</th><th class="num">上週金額</th><th class="num">本週金額</th>
+    <th class="num">上週金額</th><th class="num">本週金額</th>
     <th class="num">變化金額</th><th>歸因</th></tr></thead><tbody>`;
   rows.forEach(r => {
     r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong>`:""}</td><td>${i===0?esc(r.rep):""}</td>
       <td>${esc(x.item)}</td><td class="num">${x.q0?num(x.q0)+" "+esc(x.unit):"—"}</td><td class="num">${x.q1?num(x.q1)+" "+esc(x.unit):"—"}</td>
-      ${x.p0 !== null && x.p0 === x.p1 ? `<td></td><td></td>` : `<td class="num">${num(x.p0)}</td><td class="num">${num(x.p1)}</td>`}<td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
+      <td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
       <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
-    if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td><td></td><td></td>
+    if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
       <td class="num">${yuan(r.s0)}</td><td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td></td></tr>`;
   });
-  if (!rows.length) h += `<tr><td colspan="11" class="empty">沒有銷售額下滑的客戶。</td></tr>`;
+  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有銷售額下滑的客戶。</td></tr>`;
   document.getElementById("pvTbl").innerHTML = h + "</tbody>";
 }
 
@@ -246,7 +246,7 @@ function renderFoot(){
     <p>第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。</p>
     <p>本週、上週各為截止日往前 7 天；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
     <p>點選歸因彙總中的任一列，右方會列出有該歸因品項的客戶；再點一次或按「顯示全部」可取消。價格變動列出兩週都有購買同品項的客戶。</p>
-    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價單位依各品項交易單位；同品項兩週單價相同時，明細表不顯示單價。</p>`;
+    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價變動的影響彙總於歸因表的「價格變動」列。</p>`;
 }
 
 renderHead(); renderPV(); renderFoot();
