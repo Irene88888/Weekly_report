@@ -69,8 +69,15 @@ tr.cust-first td{border-top:2px solid var(--line)}
 .t-增量{color:var(--ok);background:var(--ok-bg)}
 .t-新增品項,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
 .neg{color:var(--late)} .pos{color:var(--ok)}
-.two{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:12px;margin-bottom:16px;align-items:start}
+.two{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:12px;margin-bottom:16px;align-items:start}
 @media (max-width:760px){.two{grid-template-columns:1fr}}
+#pvSum tbody tr[data-attr]{cursor:pointer}
+#pvSum tbody tr[data-attr]:hover td{background:var(--paper)}
+#pvSum tbody tr[aria-pressed="true"] td{background:var(--paper);box-shadow:inset 0 -2px 0 var(--ink)}
+#pvSum tbody tr[data-attr]:focus-visible{outline:2px solid var(--warn);outline-offset:-2px}
+.cap{caption-side:top;text-align:left;padding:10px 11px 0;font-size:13px;color:var(--ink-2)}
+.cap strong{color:var(--ink)}
+.cap button{font:inherit;font-size:12px;margin-left:8px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:999px;padding:0 9px;cursor:pointer}
 footer{margin-top:48px;color:var(--ink-2);font-size:13px;max-width:76ch}
 footer p{margin:0 0 6px}
 .empty{padding:18px;color:var(--ink-2)}
@@ -111,7 +118,7 @@ footer p{margin:0 0 6px}
 <script>
 const DATA = {"ref": "2026/10/19", "head": {"tw": 652663.0, "lw": 1400851.0, "tw_range": "10/13–10/19", "lw_range": "10/06–10/12", "pm": 20550206.0, "pm_label": "9月", "mtd": 2553075.0, "mtd_range": "10/01–10/19", "m_label": "10月", "target": 22779786.0, "target_basis": "去年10月全月銷售額", "days_passed": 19, "days_in_month": 31}, "pv": {"rows": [{"rep": "楊正國", "c": "啟新事業", "s0": 612967, "s1": 0, "diff": -612967, "stopped": true, "items": [{"item": "黑鮪中腹肉", "unit": "公斤", "q0": 153.9, "q1": 0.0, "p0": 1793.89, "p1": null, "s0": 276080, "s1": 0, "diff": -276080, "attr": "停購", "price": 0}, {"item": "黑鮪大腹肉", "unit": "公斤", "q0": 105.2, "q1": 0.0, "p0": 2134.32, "p1": null, "s0": 224530, "s1": 0, "diff": -224530, "attr": "停購", "price": 0}, {"item": "黑鮪赤身", "unit": "公斤", "q0": 76.3, "q1": 0.0, "p0": 1472.57, "p1": null, "s0": 112357, "s1": 0, "diff": -112357, "attr": "停購", "price": 0}]}, {"rep": "楊正國", "c": "東大興食品", "s0": 157500, "s1": 0, "diff": -157500, "stopped": true, "items": [{"item": "鮪魚碎肉", "unit": "公斤", "q0": 1500.0, "q1": 0.0, "p0": 105.0, "p1": null, "s0": 157500, "s1": 0, "diff": -157500, "attr": "停購", "price": 0}]}, {"rep": "楊正國", "c": "唯特水產", "s0": 131750, "s1": 0, "diff": -131750, "stopped": true, "items": [{"item": "南方黑鮪15/25", "unit": "公斤", "q0": 850.0, "q1": 0.0, "p0": 155.0, "p1": null, "s0": 131750, "s1": 0, "diff": -131750, "attr": "停購", "price": 0}]}, {"rep": "楊正國", "c": "那波麗士(合點壽司)", "s0": 167160, "s1": 74925, "diff": -92235, "stopped": false, "items": [{"item": "大目鮪魚赤身切板", "unit": "公斤", "q0": 150.0, "q1": 80.0, "p0": 680.0, "p1": 680.0, "s0": 102000, "s1": 54400, "diff": -47600, "attr": "減量", "price": 0}, {"item": "燒海苔對切", "unit": "包", "q0": 43.0, "q1": 0.0, "p0": 470.0, "p1": null, "s0": 20210, "s1": 0, "diff": -20210, "attr": "停購", "price": 0}, {"item": "8切燒海苔", "unit": "包", "q0": 31.0, "q1": 0.0, "p0": 485.0, "p1": null, "s0": 15035, "s1": 0, "diff": -15035, "attr": "停購", "price": 0}, {"item": "生食級鮪魚泥", "unit": "公斤", "q0": 33.5, "q1": 22.5, "p0": 690.0, "p1": 690.0, "s0": 23115, "s1": 15525, "diff": -7590, "attr": "減量", "price": 0}, {"item": "大目鮪魚赤身切板(40上)", "unit": "公斤", "q0": 10.0, "q1": 0.0, "p0": 680.0, "p1": null, "s0": 6800, "s1": 0, "diff": -6800, "attr": "停購", "price": 0}, {"item": "長鰭鮪腹肉", "unit": "公斤", "q0": 0.0, "q1": 20.0, "p0": null, "p1": 250.0, "s0": 0, "s1": 5000, "diff": 5000, "attr": "新增品項", "price": 0}]}, {"rep": "邱意涵", "c": "台灣西原商會", "s0": 30260, "s1": 10320, "diff": -19940, "stopped": false, "items": [{"item": "黑鮪赤身", "unit": "公斤", "q0": 15.2, "q1": 0.0, "p0": 1300.0, "p1": null, "s0": 19760, "s1": 0, "diff": -19760, "attr": "停購", "price": 0}, {"item": "黑鮪中腹肉", "unit": "公斤", "q0": 5.0, "q1": 0.0, "p0": 2100.0, "p1": null, "s0": 10500, "s1": 0, "diff": -10500, "attr": "停購", "price": 0}, {"item": "南方黑鮪赤身", "unit": "公斤", "q0": 0.0, "q1": 15.0, "p0": null, "p1": 688.0, "s0": 0, "s1": 10320, "diff": 10320, "attr": "新增品項", "price": 0}]}, {"rep": "楊正國", "c": "佳鮮國際", "s0": 29925, "s1": 11004, "diff": -18921, "stopped": false, "items": [{"item": "魷魚一夜干(240-280 G)", "unit": "尾", "q0": 300.0, "q1": 0.0, "p0": 99.75, "p1": null, "s0": 29925, "s1": 0, "diff": -29925, "attr": "停購", "price": 0}, {"item": "白鯧800/900", "unit": "公斤", "q0": 0.0, "q1": 10.48, "p0": null, "p1": 1050.0, "s0": 0, "s1": 11004, "diff": 11004, "attr": "新增品項", "price": 0}]}, {"rep": "呂家妤", "c": "金有福國際", "s0": 17434, "s1": 0, "diff": -17434, "stopped": true, "items": [{"item": "龍蝦尾 4oz", "unit": "公斤", "q0": 9.08, "q1": 0.0, "p0": 1920.04, "p1": null, "s0": 17434, "s1": 0, "diff": -17434, "attr": "停購", "price": 0}]}, {"rep": "陳彥竹", "c": "尚濱漁行", "s0": 5600, "s1": 0, "diff": -5600, "stopped": true, "items": [{"item": "細油瘀血塊", "unit": "公斤", "q0": 160.0, "q1": 0.0, "p0": 35.0, "p1": null, "s0": 5600, "s1": 0, "diff": -5600, "attr": "停購", "price": 0}]}, {"rep": "楊正國", "c": "大富開發", "s0": 15000, "s1": 10000, "diff": -5000, "stopped": false, "items": [{"item": "炙燒鰹魚", "unit": "公斤", "q0": 30.0, "q1": 20.0, "p0": 500.0, "p1": 500.0, "s0": 15000, "s1": 10000, "diff": -5000, "attr": "減量", "price": 0}]}, {"rep": "楊正國", "c": "君臨商行", "s0": 4925, "s1": 0, "diff": -4925, "stopped": true, "items": [{"item": "B生凍櫻花蝦", "unit": "公斤", "q0": 7.0, "q1": 0.0, "p0": 703.57, "p1": null, "s0": 4925, "s1": 0, "diff": -4925, "attr": "停購", "price": 0}]}, {"rep": "楊正國", "c": "海鉅國際", "s0": 4320, "s1": 0, "diff": -4320, "stopped": true, "items": [{"item": "祕魯小翅", "unit": "公斤", "q0": 40.0, "q1": 0.0, "p0": 108.0, "p1": null, "s0": 4320, "s1": 0, "diff": -4320, "attr": "停購", "price": 0}]}], "cust_lw": 12, "cust_tw": 11}, "exclude": ["辦公經費", "零售", "呂友助", "正洋電商", "業務 黃啓靖"]};
 const H = DATA.head, PV = DATA.pv;
-let rep = "全部";
+let rep = "全部", attr = null;
 
 const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const wan = n => (n/1e4).toLocaleString("zh-TW",{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -172,22 +179,48 @@ function renderPV(){
   f.innerHTML = ["全部",...REPS].map(p => `<button type="button" aria-pressed="${p===rep}" data-rep="${esc(p)}">${esc(p)}</button>`).join("");
   f.onclick = e => { const b = e.target.closest("button"); if(!b) return; rep = b.dataset.rep; renderPV(); };
 
-  // 歸因彙總
-  let s = `<thead><tr><th>歸因</th><th class="num">品項數</th><th class="num">變化金額</th><th class="num">佔比</th></tr></thead><tbody>`;
-  ["停購","減量","增量","新增品項"].forEach(a => s += `<tr><td>${tag(a)}</td><td class="num">${cnt(a)}</td><td class="num">${sgn(amt(a))}</td><td class="num">${pct(amt(a))}</td></tr>`);
-  s += `<tr><td>${tag("價格變動")}</td><td class="num">${items.filter(x=>x.q0>0&&x.q1>0).length}</td><td class="num">${sgn(priceTot)}</td><td class="num">${pct(priceTot)}</td></tr>`;
-  s += `<tr class="total"><td>合計</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td><td class="num">${total?"100.0%":"—"}</td></tr></tbody>`;
-  document.getElementById("pvSum").innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有銷售額下滑的客戶。</td></tr></tbody>`;
+  // 歸因彙總（點選列可在右方篩選客戶）
+  const matchItem = (x,a) => a === "價格變動" ? (x.q0 > 0 && x.q1 > 0) : x.attr === a;
+  const custOf = a => rows.filter(r => r.items.some(x => matchItem(x,a)));
+  const row = (a,n,v) => `<tr data-attr="${a}" tabindex="0" role="button" aria-pressed="${attr===a}">
+    <td>${tag(a)}</td><td class="num">${custOf(a).length}</td><td class="num">${n}</td><td class="num">${sgn(v)}</td><td class="num">${pct(v)}</td></tr>`;
+  let s = `<thead><tr><th>歸因</th><th class="num">家數</th><th class="num">品項數</th><th class="num">變化金額</th><th class="num">佔比</th></tr></thead><tbody>`;
+  ["停購","減量","增量","新增品項"].forEach(a => s += row(a, cnt(a), amt(a)));
+  s += row("價格變動", items.filter(x=>x.q0>0&&x.q1>0).length, priceTot);
+  s += `<tr class="total"><td>合計</td><td class="num">${rows.length}</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td><td class="num">${total?"100.0%":"—"}</td></tr></tbody>`;
+  const ps = document.getElementById("pvSum");
+  ps.innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有銷售額下滑的客戶。</td></tr></tbody>`;
+  const pickAttr = tr => { if (!tr) return; attr = attr === tr.dataset.attr ? null : tr.dataset.attr; renderPV(); };
+  ps.onclick = e => pickAttr(e.target.closest("tr[data-attr]"));
+  ps.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickAttr(e.target.closest("tr[data-attr]")); } };
 
-  // 客戶彙總
-  let c = `<thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
-  rows.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
-    <td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td class="num">${chg(pctTxt(r.s1,r.s0))}</td></tr>`);
-  if (rows.length) {
-    const s0=rows.reduce((a,r)=>a+r.s0,0), s1=rows.reduce((a,r)=>a+r.s1,0);
-    c += `<tr class="total"><td>合計 ${rows.length} 家（整週停單 ${stopped.length} 家）</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
+  // 客戶彙總（依點選的歸因篩選）
+  let c;
+  if (attr) {
+    const list = custOf(attr);
+    const part = r => r.items.filter(x => matchItem(x,attr));
+    const val = r => attr === "價格變動" ? part(r).reduce((s,x)=>s+x.price,0) : part(r).reduce((s,x)=>s+x.diff-x.price,0);
+    const sorted = [...list].sort((a,b) => Math.abs(val(b))-Math.abs(val(a)) || a.diff-b.diff);
+    c = `<caption class="cap">${tag(attr)}　共 <strong>${list.length}</strong> 家客戶<button type="button" id="clearAttr">顯示全部</button></caption>
+      <thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">${esc(attr)}金額</th><th class="num">客戶總變化</th></tr></thead><tbody>`;
+    sorted.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td>
+      <td>${part(r).map(x=>esc(x.item)).join("、")}</td><td class="num">${sgn(val(r))}</td><td class="num">${sgn(r.diff)}</td></tr>`);
+    const tv = sorted.reduce((s,r)=>s+val(r),0);
+    c += sorted.length ? `<tr class="total"><td>合計 ${sorted.length} 家</td><td></td><td></td><td class="num">${sgn(tv)}</td><td class="num">${sgn(sorted.reduce((s,r)=>s+r.diff,0))}</td></tr>`
+                       : `<tr><td colspan="5" class="empty">沒有屬於這個歸因的客戶。</td></tr>`;
+  } else {
+    c = `<caption class="cap">點選左方歸因，可篩選出相關客戶</caption>
+      <thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
+    rows.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
+      <td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td class="num">${chg(pctTxt(r.s1,r.s0))}</td></tr>`);
+    if (rows.length) {
+      const s0=rows.reduce((a,r)=>a+r.s0,0), s1=rows.reduce((a,r)=>a+r.s1,0);
+      c += `<tr class="total"><td>合計 ${rows.length} 家（整週停單 ${stopped.length} 家）</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
+    }
   }
   document.getElementById("custSum").innerHTML = c + "</tbody>";
+  const clr = document.getElementById("clearAttr");
+  if (clr) clr.onclick = () => { attr = null; renderPV(); };
 
   // 品項明細
   let h = `<thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">上週量</th><th class="num">本週量</th>
@@ -209,6 +242,7 @@ function renderFoot(){
   document.getElementById("foot").innerHTML = `
     <p>第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。</p>
     <p>本週、上週各為截止日往前 7 天；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>點選歸因彙總中的任一列，右方會列出有該歸因品項的客戶；再點一次或按「顯示全部」可取消。價格變動列出兩週都有購買同品項的客戶。</p>
     <p>價量分析：停購＝上週有買、本週沒買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價單位依各品項交易單位。</p>`;
 }
 
