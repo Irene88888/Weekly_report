@@ -143,8 +143,8 @@ function renderHead(){
       <i style="width:${Math.min(rate,1)*100}%"></i><b style="left:${time*100}%"></b></div>
     <div class="legend"><span>完成 ${(rate*100).toFixed(1)}%</span><span>時間進度 ${(time*100).toFixed(0)}%（${H.days_passed}/${H.days_in_month} 天）</span></div>`;
   document.getElementById("monthCards").innerHTML =
-    card(`上月銷售額（${H.pm_label}）`, `${wan(H.pm)}<small>萬</small>`, `${yuan(H.pm)} 元`) +
     card(`本月累計銷售額（${H.mtd_range}）`, `${wan(H.mtd)}<small>萬</small>`, `${yuan(H.mtd)} 元`, "key") +
+    card(`上月銷售額（${H.pm_label}）`, `${wan(H.pm)}<small>萬</small>`, `${yuan(H.pm)} 元`) +
     `<div class="card"><div class="lbl">完成率</div><div class="val">${(rate*100).toFixed(1)}<small>%</small></div>
       <div class="note">基準：${esc(H.target_basis)} ${wan(H.target)} 萬</div>${prog}</div>`;
 }
