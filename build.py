@@ -52,12 +52,13 @@ def headline(df, ref):
     if key in TARGETS:
         target, basis = float(TARGETS[key]), "月目標"
     else:
-        target, basis = total(df, ly0, ly1), f"去年{ly0.month}月全月銷售額"
+        target, basis = total(df, ly0, ly1), f"去年{ly0.month}月全月"
     return {
         "tw": total(df, tw0, ref), "lw": total(df, lw0, lw1),
         "tw_range": f"{tw0:%m/%d}–{ref:%m/%d}", "lw_range": f"{lw0:%m/%d}–{lw1:%m/%d}",
         "pm": total(df, pm0, pm1), "pm_label": f"{pm0.month}月",
         "mtd": total(df, m0, ref), "mtd_range": f"{m0:%m/%d}–{ref:%m/%d}", "m_label": f"{m0.month}月",
+        "ly_month": total(df, ly0, ly1), "ly_label": f"{ly0:%Y}年{ly0.month}月",
         "target": target, "target_basis": basis,
         "days_passed": ref.day, "days_in_month": (m0 + pd.offsets.MonthEnd(0)).day,
     }

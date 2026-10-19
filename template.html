@@ -35,7 +35,7 @@ section{margin-top:40px}
 h2{font-size:19px;margin:0 0 14px;display:flex;align-items:baseline;gap:10px}
 h2 .no{font-size:13px;font-weight:700;color:var(--paper);background:var(--ink);border-radius:4px;padding:1px 7px}
 .sub{color:var(--ink-2);margin:0 0 14px;font-size:14px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
 .card .lbl{font-size:13px;color:var(--ink-2)}
 .card .val{font-size:30px;font-weight:700;line-height:1.25;margin-top:4px}
@@ -146,6 +146,7 @@ function renderHead(){
   document.getElementById("monthCards").innerHTML =
     card(`本月累計銷售額（${H.mtd_range}）`, `${wan(H.mtd)}<small>萬</small>`, `${yuan(H.mtd)} 元`, "key") +
     card(`上月銷售額（${H.pm_label}）`, `${wan(H.pm)}<small>萬</small>`, `${yuan(H.pm)} 元`) +
+    card(`去年同月銷售額（${H.ly_label}）`, `${wan(H.ly_month)}<small>萬</small>`, `${yuan(H.ly_month)} 元`) +
     `<div class="card"><div class="lbl">完成率</div><div class="val">${(rate*100).toFixed(1)}<small>%</small></div>
       <div class="note">基準：${esc(H.target_basis)} ${wan(H.target)} 萬</div>${prog}</div>`;
 }
