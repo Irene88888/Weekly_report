@@ -202,14 +202,14 @@ function renderPV(){
     const list = custOf(attr);
     const part = r => r.items.filter(x => matchItem(x,attr));
     const val = r => attr === "價格變動" ? part(r).reduce((s,x)=>s+x.price,0) : part(r).reduce((s,x)=>s+x.diff-x.price,0);
-    const sorted = [...list].sort((a,b) => Math.abs(val(b))-Math.abs(val(a)) || a.diff-b.diff);
+    const sorted = [...list].sort((a,b) => Math.abs(val(b))-Math.abs(val(a)));
     c = `<caption class="cap">${tag(attr)}　共 <strong>${list.length}</strong> 家客戶<button type="button" id="clearAttr">顯示全部</button></caption>
-      <thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">${esc(attr)}金額</th><th class="num">客戶總變化</th></tr></thead><tbody>`;
+      <thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">${esc(attr)}金額</th></tr></thead><tbody>`;
     sorted.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td>
-      <td>${part(r).map(x=>esc(x.item)).join("、")}</td><td class="num">${sgn(val(r))}</td><td class="num">${sgn(r.diff)}</td></tr>`);
+      <td>${part(r).map(x=>esc(x.item)).join("、")}</td><td class="num">${sgn(val(r))}</td></tr>`);
     const tv = sorted.reduce((s,r)=>s+val(r),0);
-    c += sorted.length ? `<tr class="total"><td>合計 ${sorted.length} 家</td><td></td><td></td><td class="num">${sgn(tv)}</td><td class="num">${sgn(sorted.reduce((s,r)=>s+r.diff,0))}</td></tr>`
-                       : `<tr><td colspan="5" class="empty">沒有屬於這個歸因的客戶。</td></tr>`;
+    c += sorted.length ? `<tr class="total"><td>合計 ${sorted.length} 家</td><td></td><td></td><td class="num">${sgn(tv)}</td></tr>`
+                       : `<tr><td colspan="4" class="empty">沒有屬於這個歸因的客戶。</td></tr>`;
   } else {
     c = `<caption class="cap">點選左方歸因，可篩選出相關客戶</caption>
       <thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
