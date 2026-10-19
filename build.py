@@ -82,7 +82,7 @@ def price_volume(df, ref):
         items = []
         for _, x in g.iterrows():
             if x.q0 > 0 and x.q1 <= 0:
-                attr = "停購"
+                attr = "全數停購" if s1 <= 0 else "部份停購"   # 客戶整週沒出貨 vs 仍有買其他品項
             elif x.q0 <= 0 and x.q1 > 0:
                 attr = "新增品項"
             else:
