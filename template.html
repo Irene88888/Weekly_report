@@ -237,20 +237,28 @@ function renderPV(){
   const clr = document.getElementById("clearAttr");
   if (clr) clr.onclick = () => { attr = null; renderPV(); };
 
-  // 品項明細
-  let h = `<thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">上週量</th><th class="num">本週量</th>
+  // 品項明細（跟著點選的歸因一起篩選）
+  const dRows = attr ? custOf(attr) : rows;
+  const dItems = r => attr ? r.items.filter(x => matchItem(x,attr)) : r.items;
+  let h = (attr ? `<caption class="cap">${tag(attr)}　品項明細<button type="button" class="clearAttr2">顯示全部</button></caption>` : "") +
+    `<thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">上週量</th><th class="num">本週量</th>
     <th class="num">上週金額</th><th class="num">本週金額</th>
     <th class="num">變化金額</th><th>歸因</th></tr></thead><tbody>`;
-  rows.forEach(r => {
-    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong> ${stTag(r)}`:""}</td><td>${i===0?esc(r.rep):""}</td>
+  dRows.forEach(r => {
+    const its = dItems(r);
+    its.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong> ${stTag(r)}`:""}</td><td>${i===0?esc(r.rep):""}</td>
       <td>${esc(x.item)}</td><td class="num">${x.q0?num(x.q0)+" "+esc(x.unit):"—"}</td><td class="num">${x.q1?num(x.q1)+" "+esc(x.unit):"—"}</td>
       <td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
       <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
-    if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
-      <td class="num">${yuan(r.s0)}</td><td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td></td></tr>`;
+    if (its.length > 1) {
+      const a0=its.reduce((s,x)=>s+x.s0,0), a1=its.reduce((s,x)=>s+x.s1,0);
+      h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
+      <td class="num">${yuan(a0)}</td><td class="num">${yuan(a1)}</td><td class="num">${sgn(a1-a0)}</td><td></td></tr>`;
+    }
   });
-  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有交易客戶。</td></tr>`;
+  if (!dRows.length) h += `<tr><td colspan="9" class="empty">${attr ? "沒有屬於這個歸因的品項。" : "沒有交易客戶。"}</td></tr>`;
   document.getElementById("pvTbl").innerHTML = h + "</tbody>";
+  document.querySelectorAll(".clearAttr2").forEach(b => b.onclick = () => { attr = null; renderPV(); });
 }
 
 function renderFoot(){
