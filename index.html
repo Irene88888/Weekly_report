@@ -174,8 +174,8 @@ function renderPV(){
   const net = all.reduce((s,r)=>s+r.diff,0), allPrice = allItems.reduce((a,x)=>a+x.price,0);
   const stopV = allItems.filter(x=>x.attr==="全數停購"||x.attr==="部份停購").reduce((s,x)=>s+x.diff,0);
   document.getElementById("pvLead").innerHTML = all.length ?
-    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家；兩週有交易的客戶共 <strong>${all.length}</strong> 家，淨變化 <strong>${net<0?"":"+"}${wan(net)} 萬</strong>。<br>
-     銷售額下滑 <strong>${nDown}</strong> 家，合計減少 <strong>${wan(-vDown)} 萬</strong>（其中整週停單 ${nStop} 家；停購品項佔下滑 ${vDown?(stopV/vDown*100).toFixed(0):0}%）；
+    `本週有出貨的客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家，其中 <strong>${nStop}</strong> 家本週沒有下單、<strong>${nNew}</strong> 家是本週新出貨。整體銷售額比上週${net<0?"減少":"增加"} <strong>${wan(Math.abs(net))} 萬</strong>。<br>
+     銷售額下滑 <strong>${nDown}</strong> 家，合計減少 <strong>${wan(-vDown)} 萬</strong>（停購品項佔下滑 ${vDown?(stopV/vDown*100).toFixed(0):0}%）；
      成長 <strong>${nUp}</strong> 家，增加 ${wan(vUp)} 萬；新出貨 <strong>${nNew}</strong> 家，增加 ${wan(vNew)} 萬${firsts.length?`，其中首次交易：${firsts.map(r=>`<strong>${esc(r.c)}</strong>（${esc(r.rep)}，${wan(r.s1)} 萬）`).join("、")}`:""}。
      價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。`
     : "本週與上週都沒有交易客戶。";
