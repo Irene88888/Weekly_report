@@ -64,11 +64,12 @@ tr.total td{font-weight:700;background:var(--paper)}
 tr.sub td{font-weight:700}
 tr.cust-first td{border-top:2px solid var(--line)}
 .tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;font-weight:500}
+.t-持平{color:var(--ink-2);background:var(--paper)}
 .t-全數停購,.t-停單{color:var(--late);background:var(--late-bg)}
 .t-部份停購{color:var(--late);background:var(--card);box-shadow:inset 0 0 0 1px var(--late)}
-.t-減量{color:var(--warn);background:var(--warn-bg)}
-.t-增量{color:var(--ok);background:var(--ok-bg)}
-.t-新增品項,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
+.t-減量,.t-下滑{color:var(--warn);background:var(--warn-bg)}
+.t-增量,.t-成長,.t-首次交易{color:var(--ok);background:var(--ok-bg)}
+.t-新增品項,.t-新出貨客戶,.t-新出貨,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
 .neg{color:var(--late)} .pos{color:var(--ok)}
 .two{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:12px;margin-bottom:16px;align-items:start}
 @media (max-width:760px){.two{grid-template-columns:1fr}}
@@ -79,6 +80,7 @@ tr.cust-first td{border-top:2px solid var(--line)}
 .cap{caption-side:top;text-align:left;padding:10px 11px 0;font-size:13px;color:var(--ink-2)}
 .cap strong{color:var(--ink)}
 .cap button{font:inherit;font-size:12px;margin-left:8px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:999px;padding:0 9px;cursor:pointer}
+tr.recon td{color:var(--ink-2);border-top:1px dashed var(--line)}
 footer{margin-top:48px;color:var(--ink-2);font-size:13px;max-width:76ch}
 footer p{margin:0 0 6px}
 .empty{padding:18px;color:var(--ink-2)}
@@ -103,7 +105,7 @@ footer p{margin:0 0 6px}
   </section>
 
   <section>
-    <h2><span class="no">3</span>本週客戶動態：銷售額下滑客戶價量分析</h2>
+    <h2><span class="no">3</span>本週客戶動態：價量分析</h2>
     <p class="lead" id="pvLead"></p>
     <nav class="filters" id="repFilter" aria-label="依業務篩選"></nav>
     <div class="two">
@@ -161,21 +163,22 @@ function renderPV(){
   const priceTot = items.reduce((a,x) => a + x.price, 0);
   const amt = a => items.filter(x => x.attr === a).reduce((s,x) => s + x.diff - x.price, 0);
   const cnt = a => items.filter(x => x.attr === a).length;
-  const pct = v => total ? (v/total*100).toFixed(1) + "%" : "—";
-  const stopped = rows.filter(r => r.stopped);
-  const stopAmt = stopped.reduce((s,r)=>s+r.diff,0);
+  const stTag = r => r.status === "新出貨" ? (r.first ? tag("首次交易") : tag("新出貨")) : r.status === "持平" ? "" : tag(r.status);
 
-  // 摘要說明
-  const all = PV.rows, allItems = all.flatMap(r=>r.items), allTot = allItems.reduce((a,x)=>a+x.diff,0);
-  const stopOf = a => allItems.filter(x=>x.attr===a).reduce((s,x)=>s+x.diff,0);
-  const allStop = stopOf("全數停購") + stopOf("部份停購");
-  const allPrice = allItems.reduce((a,x)=>a+x.price,0);
-  const top = all[0];
+  // 摘要說明（全部業務）
+  const all = PV.rows, allItems = all.flatMap(r=>r.items);
+  const grp = f => { const l = all.filter(f); return [l.length, l.reduce((s,r)=>s+r.diff,0), l]; };
+  const [nDown, vDown] = grp(r => r.diff < 0), [nStop] = grp(r => r.status === "停單");
+  const [nUp, vUp] = grp(r => r.status === "成長"), [nNew, vNew, lNew] = grp(r => r.status === "新出貨");
+  const firsts = lNew.filter(r => r.first);
+  const net = all.reduce((s,r)=>s+r.diff,0), allPrice = allItems.reduce((a,x)=>a+x.price,0);
+  const stopV = allItems.filter(x=>x.attr==="全數停購"||x.attr==="部份停購").reduce((s,x)=>s+x.diff,0);
   document.getElementById("pvLead").innerHTML = all.length ?
-    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家。銷售額下滑的客戶共 <strong>${all.length}</strong> 家，合計減少 <strong>${wan(-allTot)} 萬</strong>；
-     其中停購品項佔 <strong>${allTot?(allStop/allTot*100).toFixed(0):0}%</strong>（全數停購 ${wan(-stopOf("全數停購"))} 萬、部份停購 ${wan(-stopOf("部份停購"))} 萬），價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。
-     下滑最多的是 <strong>${esc(top.c)}</strong>（${esc(top.rep)}），減少 ${wan(-top.diff)} 萬。`
-    : "本週沒有銷售額下滑的客戶。";
+    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家；兩週有交易的客戶共 <strong>${all.length}</strong> 家，淨變化 <strong>${net<0?"":"+"}${wan(net)} 萬</strong>。<br>
+     銷售額下滑 <strong>${nDown}</strong> 家，合計減少 <strong>${wan(-vDown)} 萬</strong>（其中整週停單 ${nStop} 家；停購品項佔下滑 ${vDown?(stopV/vDown*100).toFixed(0):0}%）；
+     成長 <strong>${nUp}</strong> 家，增加 ${wan(vUp)} 萬；新出貨 <strong>${nNew}</strong> 家，增加 ${wan(vNew)} 萬${firsts.length?`，其中首次交易：${firsts.map(r=>`<strong>${esc(r.c)}</strong>（${esc(r.rep)}，${wan(r.s1)} 萬）`).join("、")}`:""}。
+     價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。`
+    : "本週與上週都沒有交易客戶。";
 
   // 業務篩選
   const f = document.getElementById("repFilter");
@@ -183,16 +186,25 @@ function renderPV(){
   f.onclick = e => { const b = e.target.closest("button"); if(!b) return; rep = b.dataset.rep; renderPV(); };
 
   // 歸因彙總（點選列可在右方篩選客戶）
+  const ATTRS = ["全數停購","部份停購","減量","增量","新增品項","新出貨客戶"];
   const matchItem = (x,a) => a === "價格變動" ? (x.q0 > 0 && x.q1 > 0) : x.attr === a;
   const custOf = a => rows.filter(r => r.items.some(x => matchItem(x,a)));
   const row = (a,n,v) => `<tr data-attr="${a}" tabindex="0" role="button" aria-pressed="${attr===a}">
-    <td>${tag(a)}</td><td class="num">${custOf(a).length}</td><td class="num">${n}</td><td class="num">${sgn(v)}</td><td class="num">${pct(v)}</td></tr>`;
-  let s = `<thead><tr><th>歸因</th><th class="num">家數</th><th class="num">品項數</th><th class="num">變化金額</th><th class="num">佔比</th></tr></thead><tbody>`;
-  ["全數停購","部份停購","減量","增量","新增品項"].forEach(a => s += row(a, cnt(a), amt(a)));
+    <td>${tag(a)}</td><td class="num">${custOf(a).length}</td><td class="num">${n}</td><td class="num">${sgn(v)}</td></tr>`;
+  let s = `<thead><tr><th>歸因</th><th class="num">家數</th><th class="num">品項數</th><th class="num">變化金額</th></tr></thead><tbody>`;
+  ATTRS.forEach(a => s += row(a, cnt(a), amt(a)));
   s += row("價格變動", items.filter(x=>x.q0>0&&x.q1>0).length, priceTot);
-  s += `<tr class="total"><td>合計</td><td class="num">${rows.length}</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td><td class="num">${total?"100.0%":"—"}</td></tr></tbody>`;
+  s += `<tr class="total"><td>淨變化</td><td class="num">${rows.length}</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td></tr>`;
+  // 對帳：加回排除客戶＝第1段本週銷售額變化（僅在「全部」業務時顯示）
+  const EX = PV.excluded || [];
+  if (rep === "全部" && EX.length) {
+    const exV = EX.reduce((a,r)=>a+r.s1-r.s0,0);
+    s += `<tr class="recon"><td>排除客戶<br><small>${EX.map(r=>esc(r.c)).join("、")}</small></td><td></td><td></td><td class="num">${sgn(exV)}</td></tr>
+      <tr class="total"><td>本週銷售額變化<br><small>＝第 1 段</small></td><td></td><td></td><td class="num">${sgn(total+exV)}</td></tr>`;
+  }
+  s += `</tbody>`;
   const ps = document.getElementById("pvSum");
-  ps.innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有銷售額下滑的客戶。</td></tr></tbody>`;
+  ps.innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有交易客戶。</td></tr></tbody>`;
   const pickAttr = tr => { if (!tr) return; attr = attr === tr.dataset.attr ? null : tr.dataset.attr; renderPV(); };
   ps.onclick = e => pickAttr(e.target.closest("tr[data-attr]"));
   ps.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickAttr(e.target.closest("tr[data-attr]")); } };
@@ -206,7 +218,7 @@ function renderPV(){
     const sorted = [...list].sort((a,b) => Math.abs(val(b))-Math.abs(val(a)));
     c = `<caption class="cap">${tag(attr)}　共 <strong>${list.length}</strong> 家客戶<button type="button" id="clearAttr">顯示全部</button></caption>
       <thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">${esc(attr)}金額</th></tr></thead><tbody>`;
-    sorted.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td>
+    sorted.forEach(r => c += `<tr><td>${esc(r.c)} ${stTag(r)}</td><td>${esc(r.rep)}</td>
       <td>${part(r).map(x=>esc(x.item)).join("、")}</td><td class="num">${sgn(val(r))}</td></tr>`);
     const tv = sorted.reduce((s,r)=>s+val(r),0);
     c += sorted.length ? `<tr class="total"><td>合計 ${sorted.length} 家</td><td></td><td></td><td class="num">${sgn(tv)}</td></tr>`
@@ -214,11 +226,11 @@ function renderPV(){
   } else {
     c = `<caption class="cap">點選左方歸因，可篩選出相關客戶</caption>
       <thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
-    rows.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
+    rows.forEach(r => c += `<tr><td>${esc(r.c)} ${stTag(r)}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
       <td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td class="num">${chg(pctTxt(r.s1,r.s0))}</td></tr>`);
     if (rows.length) {
       const s0=rows.reduce((a,r)=>a+r.s0,0), s1=rows.reduce((a,r)=>a+r.s1,0);
-      c += `<tr class="total"><td>合計 ${rows.length} 家（整週停單 ${stopped.length} 家）</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
+      c += `<tr class="total"><td>合計 ${rows.length} 家</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
     }
   }
   document.getElementById("custSum").innerHTML = c + "</tbody>";
@@ -230,23 +242,24 @@ function renderPV(){
     <th class="num">上週金額</th><th class="num">本週金額</th>
     <th class="num">變化金額</th><th>歸因</th></tr></thead><tbody>`;
   rows.forEach(r => {
-    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong>`:""}</td><td>${i===0?esc(r.rep):""}</td>
+    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong> ${stTag(r)}`:""}</td><td>${i===0?esc(r.rep):""}</td>
       <td>${esc(x.item)}</td><td class="num">${x.q0?num(x.q0)+" "+esc(x.unit):"—"}</td><td class="num">${x.q1?num(x.q1)+" "+esc(x.unit):"—"}</td>
       <td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
       <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
     if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
       <td class="num">${yuan(r.s0)}</td><td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td></td></tr>`;
   });
-  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有銷售額下滑的客戶。</td></tr>`;
+  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有交易客戶。</td></tr>`;
   document.getElementById("pvTbl").innerHTML = h + "</tbody>";
 }
 
 function renderFoot(){
   document.getElementById("foot").innerHTML = `
-    <p>第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。</p>
-    <p>本週、上週各為截止日往前 7 天；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>${DATA.exclude.length ? `第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。` : "三段皆為全體內銷銷售額，第 3 段淨變化即等於第 1 段本週銷售額變化。"}</p>
+    <p>本週、上週為完整一週（週一～週五），取截止日當天或之前最近的週五為本週結束日；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>客戶動態列出本週或上週有交易的全部客戶，依變化金額由減少到增加排序；標籤：停單＝本週完全沒出貨、下滑、成長、新出貨＝上週沒出貨本週有出貨（首次交易＝過去從未交易）。</p>
     <p>點選歸因彙總中的任一列，右方會列出有該歸因品項的客戶；再點一次或按「顯示全部」可取消。價格變動列出兩週都有購買同品項的客戶。</p>
-    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價變動的影響彙總於歸因表的「價格變動」列。</p>`;
+    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝老客戶本週多買的新品項；新出貨客戶＝上週整週沒出貨的客戶本週買的品項；增量＝同品項多買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價變動的影響彙總於歸因表的「價格變動」列。</p>`;
 }
 
 renderHead(); renderPV(); renderFoot();
