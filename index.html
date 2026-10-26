@@ -64,11 +64,12 @@ tr.total td{font-weight:700;background:var(--paper)}
 tr.sub td{font-weight:700}
 tr.cust-first td{border-top:2px solid var(--line)}
 .tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;font-weight:500}
+.t-持平{color:var(--ink-2);background:var(--paper)}
 .t-全數停購,.t-停單{color:var(--late);background:var(--late-bg)}
 .t-部份停購{color:var(--late);background:var(--card);box-shadow:inset 0 0 0 1px var(--late)}
-.t-減量{color:var(--warn);background:var(--warn-bg)}
-.t-增量{color:var(--ok);background:var(--ok-bg)}
-.t-新增品項,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
+.t-減量,.t-下滑{color:var(--warn);background:var(--warn-bg)}
+.t-增量,.t-成長,.t-首次交易{color:var(--ok);background:var(--ok-bg)}
+.t-新增品項,.t-新出貨客戶,.t-新出貨,.t-價格變動{color:var(--irr);background:var(--irr-bg)}
 .neg{color:var(--late)} .pos{color:var(--ok)}
 .two{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:12px;margin-bottom:16px;align-items:start}
 @media (max-width:760px){.two{grid-template-columns:1fr}}
@@ -103,7 +104,7 @@ footer p{margin:0 0 6px}
   </section>
 
   <section>
-    <h2><span class="no">3</span>本週客戶動態：銷售額下滑客戶價量分析</h2>
+    <h2><span class="no">3</span>本週客戶動態：價量分析</h2>
     <p class="lead" id="pvLead"></p>
     <nav class="filters" id="repFilter" aria-label="依業務篩選"></nav>
     <div class="two">
@@ -117,7 +118,7 @@ footer p{margin:0 0 6px}
 </div>
 
 <script>
-const DATA = {"ref": "2026/10/19", "head": {"tw": 652663.0, "lw": 1400851.0, "tw_range": "10/13–10/19", "lw_range": "10/06–10/12", "pm": 20550206.0, "pm_label": "9月", "mtd": 2553075.0, "mtd_range": "10/01–10/19", "m_label": "10月", "ly_month": 22779786.0, "ly_label": "2025年10月", "target": 22779786.0, "target_basis": "去年10月全月", "days_passed": 19, "days_in_month": 31}, "pv": {"rows": [{"rep": "楊正國", "c": "啟新事業", "s0": 612967, "s1": 0, "diff": -612967, "stopped": true, "items": [{"item": "黑鮪中腹肉", "unit": "公斤", "q0": 153.9, "q1": 0.0, "p0": 1793.89, "p1": null, "s0": 276080, "s1": 0, "diff": -276080, "attr": "全數停購", "price": 0}, {"item": "黑鮪大腹肉", "unit": "公斤", "q0": 105.2, "q1": 0.0, "p0": 2134.32, "p1": null, "s0": 224530, "s1": 0, "diff": -224530, "attr": "全數停購", "price": 0}, {"item": "黑鮪赤身", "unit": "公斤", "q0": 76.3, "q1": 0.0, "p0": 1472.57, "p1": null, "s0": 112357, "s1": 0, "diff": -112357, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "東大興食品", "s0": 157500, "s1": 0, "diff": -157500, "stopped": true, "items": [{"item": "鮪魚碎肉", "unit": "公斤", "q0": 1500.0, "q1": 0.0, "p0": 105.0, "p1": null, "s0": 157500, "s1": 0, "diff": -157500, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "唯特水產", "s0": 131750, "s1": 0, "diff": -131750, "stopped": true, "items": [{"item": "南方黑鮪15/25", "unit": "公斤", "q0": 850.0, "q1": 0.0, "p0": 155.0, "p1": null, "s0": 131750, "s1": 0, "diff": -131750, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "那波麗士(合點壽司)", "s0": 167160, "s1": 74925, "diff": -92235, "stopped": false, "items": [{"item": "大目鮪魚赤身切板", "unit": "公斤", "q0": 150.0, "q1": 80.0, "p0": 680.0, "p1": 680.0, "s0": 102000, "s1": 54400, "diff": -47600, "attr": "減量", "price": 0}, {"item": "燒海苔對切", "unit": "包", "q0": 43.0, "q1": 0.0, "p0": 470.0, "p1": null, "s0": 20210, "s1": 0, "diff": -20210, "attr": "部份停購", "price": 0}, {"item": "8切燒海苔", "unit": "包", "q0": 31.0, "q1": 0.0, "p0": 485.0, "p1": null, "s0": 15035, "s1": 0, "diff": -15035, "attr": "部份停購", "price": 0}, {"item": "生食級鮪魚泥", "unit": "公斤", "q0": 33.5, "q1": 22.5, "p0": 690.0, "p1": 690.0, "s0": 23115, "s1": 15525, "diff": -7590, "attr": "減量", "price": 0}, {"item": "大目鮪魚赤身切板(40上)", "unit": "公斤", "q0": 10.0, "q1": 0.0, "p0": 680.0, "p1": null, "s0": 6800, "s1": 0, "diff": -6800, "attr": "部份停購", "price": 0}, {"item": "長鰭鮪腹肉", "unit": "公斤", "q0": 0.0, "q1": 20.0, "p0": null, "p1": 250.0, "s0": 0, "s1": 5000, "diff": 5000, "attr": "新增品項", "price": 0}]}, {"rep": "邱意涵", "c": "台灣西原商會", "s0": 30260, "s1": 10320, "diff": -19940, "stopped": false, "items": [{"item": "黑鮪赤身", "unit": "公斤", "q0": 15.2, "q1": 0.0, "p0": 1300.0, "p1": null, "s0": 19760, "s1": 0, "diff": -19760, "attr": "部份停購", "price": 0}, {"item": "黑鮪中腹肉", "unit": "公斤", "q0": 5.0, "q1": 0.0, "p0": 2100.0, "p1": null, "s0": 10500, "s1": 0, "diff": -10500, "attr": "部份停購", "price": 0}, {"item": "南方黑鮪赤身", "unit": "公斤", "q0": 0.0, "q1": 15.0, "p0": null, "p1": 688.0, "s0": 0, "s1": 10320, "diff": 10320, "attr": "新增品項", "price": 0}]}, {"rep": "楊正國", "c": "佳鮮國際", "s0": 29925, "s1": 11004, "diff": -18921, "stopped": false, "items": [{"item": "魷魚一夜干(240-280 G)", "unit": "尾", "q0": 300.0, "q1": 0.0, "p0": 99.75, "p1": null, "s0": 29925, "s1": 0, "diff": -29925, "attr": "部份停購", "price": 0}, {"item": "白鯧800/900", "unit": "公斤", "q0": 0.0, "q1": 10.48, "p0": null, "p1": 1050.0, "s0": 0, "s1": 11004, "diff": 11004, "attr": "新增品項", "price": 0}]}, {"rep": "呂家妤", "c": "金有福國際", "s0": 17434, "s1": 0, "diff": -17434, "stopped": true, "items": [{"item": "龍蝦尾 4oz", "unit": "公斤", "q0": 9.08, "q1": 0.0, "p0": 1920.04, "p1": null, "s0": 17434, "s1": 0, "diff": -17434, "attr": "全數停購", "price": 0}]}, {"rep": "陳彥竹", "c": "尚濱漁行", "s0": 5600, "s1": 0, "diff": -5600, "stopped": true, "items": [{"item": "細油瘀血塊", "unit": "公斤", "q0": 160.0, "q1": 0.0, "p0": 35.0, "p1": null, "s0": 5600, "s1": 0, "diff": -5600, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "大富開發", "s0": 15000, "s1": 10000, "diff": -5000, "stopped": false, "items": [{"item": "炙燒鰹魚", "unit": "公斤", "q0": 30.0, "q1": 20.0, "p0": 500.0, "p1": 500.0, "s0": 15000, "s1": 10000, "diff": -5000, "attr": "減量", "price": 0}]}, {"rep": "楊正國", "c": "君臨商行", "s0": 4925, "s1": 0, "diff": -4925, "stopped": true, "items": [{"item": "B生凍櫻花蝦", "unit": "公斤", "q0": 7.0, "q1": 0.0, "p0": 703.57, "p1": null, "s0": 4925, "s1": 0, "diff": -4925, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "海鉅國際", "s0": 4320, "s1": 0, "diff": -4320, "stopped": true, "items": [{"item": "祕魯小翅", "unit": "公斤", "q0": 40.0, "q1": 0.0, "p0": 108.0, "p1": null, "s0": 4320, "s1": 0, "diff": -4320, "attr": "全數停購", "price": 0}]}], "cust_lw": 12, "cust_tw": 11}, "exclude": ["辦公經費", "零售", "呂友助", "正洋電商", "業務 黃啓靖"]};
+const DATA = {"ref": "2026/10/23", "head": {"tw": 371844.0, "lw": 1162250.0, "tw_range": "10/19–10/23", "lw_range": "10/12–10/16", "pm": 20550206.0, "pm_label": "9月", "mtd": 3162477.0, "mtd_range": "10/01–10/23", "m_label": "10月", "ly_month": 22779786.0, "ly_label": "2025年10月", "target": 22779786.0, "target_basis": "去年10月全月", "days_passed": 23, "days_in_month": 31}, "pv": {"rows": [{"rep": "邱意涵", "c": "東西國際貿易", "s0": 276360, "s1": 0, "diff": -276360, "status": "停單", "first": false, "last": null, "items": [{"item": "黑鮪大腹肉", "unit": "公斤", "q0": 88.1, "q1": 0.0, "s0": 77616, "s1": 0, "diff": -77616, "attr": "全數停購", "price": 0}, {"item": "黑鮪中腹肉", "unit": "公斤", "q0": 64.9, "q1": 0.0, "s0": 57177, "s1": 0, "diff": -57177, "attr": "全數停購", "price": 0}, {"item": "黑鮪赤身", "unit": "公斤", "q0": 59.4, "q1": 0.0, "s0": 52331, "s1": 0, "diff": -52331, "attr": "全數停購", "price": 0}, {"item": "鮭魚菲力", "unit": "公斤", "q0": 108.0, "q1": 0.0, "s0": 35316, "s1": 0, "diff": -35316, "attr": "全數停購", "price": 0}, {"item": "冷凍鮭魚卵", "unit": "公斤", "q0": 10.0, "q1": 0.0, "s0": 26817, "s1": 0, "diff": -26817, "attr": "全數停購", "price": 0}, {"item": "軍艦海苔", "unit": "公斤", "q0": 2.7, "q1": 0.0, "s0": 9330, "s1": 0, "diff": -9330, "attr": "全數停購", "price": 0}, {"item": "山葵粉", "unit": "公斤", "q0": 12.0, "q1": 0.0, "s0": 6678, "s1": 0, "diff": -6678, "attr": "全數停購", "price": 0}, {"item": "調味壽司醋", "unit": "公斤", "q0": 40.0, "q1": 0.0, "s0": 4326, "s1": 0, "diff": -4326, "attr": "全數停購", "price": 0}, {"item": "冷凍山葵泥", "unit": "公斤", "q0": 6.0, "q1": 0.0, "s0": 4259, "s1": 0, "diff": -4259, "attr": "全數停購", "price": 0}, {"item": "琥珀壽司醋", "unit": "公斤", "q0": 14.4, "q1": 0.0, "s0": 2510, "s1": 0, "diff": -2510, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "菄海實業", "s0": 182270, "s1": 0, "diff": -182270, "status": "停單", "first": false, "last": "2026/09/24", "items": [{"item": "黃肌STEAK", "unit": "公斤", "q0": 920.0, "q1": 0.0, "s0": 101200, "s1": 0, "diff": -101200, "attr": "全數停購", "price": 0}, {"item": "黃肌LOIN", "unit": "公斤", "q0": 737.0, "q1": 0.0, "s0": 81070, "s1": 0, "diff": -81070, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "東大興食品", "s0": 157500, "s1": 0, "diff": -157500, "status": "停單", "first": false, "last": "2026/09/29", "items": [{"item": "鮪魚碎肉", "unit": "公斤", "q0": 1500.0, "q1": 0.0, "s0": 157500, "s1": 0, "diff": -157500, "attr": "全數停購", "price": 0}]}, {"rep": "邱意涵", "c": "台灣西原商會", "s0": 40580, "s1": 0, "diff": -40580, "status": "停單", "first": false, "last": "2026/09/22", "items": [{"item": "黑鮪赤身", "unit": "公斤", "q0": 15.2, "q1": 0.0, "s0": 19760, "s1": 0, "diff": -19760, "attr": "全數停購", "price": 0}, {"item": "黑鮪中腹肉", "unit": "公斤", "q0": 5.0, "q1": 0.0, "s0": 10500, "s1": 0, "diff": -10500, "attr": "全數停購", "price": 0}, {"item": "南方黑鮪赤身", "unit": "公斤", "q0": 15.0, "q1": 0.0, "s0": 10320, "s1": 0, "diff": -10320, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "沐陞", "s0": 42540, "s1": 6600, "diff": -35940, "status": "下滑", "first": false, "last": "2026/10/05", "items": [{"item": "南方黑鮪赤身", "unit": "公斤", "q0": 54.0, "q1": 10.0, "s0": 35640, "s1": 6600, "diff": -29040, "attr": "減量", "price": 0}, {"item": "黑鮪大腹肉", "unit": "公斤", "q0": 3.0, "q1": 0.0, "s0": 6900, "s1": 0, "diff": -6900, "attr": "部份停購", "price": 0}]}, {"rep": "楊正國", "c": "那波麗士(合點壽司)", "s0": 108625, "s1": 78460, "diff": -30165, "status": "下滑", "first": false, "last": "2026/10/08", "items": [{"item": "大目鮪魚赤身切板", "unit": "公斤", "q0": 120.0, "q1": 80.0, "s0": 81600, "s1": 54400, "diff": -27200, "attr": "減量", "price": 0}, {"item": "生食級鮪魚泥", "unit": "公斤", "q0": 25.0, "q1": 14.0, "s0": 17250, "s1": 9660, "diff": -7590, "attr": "減量", "price": 0}, {"item": "長鰭鮪腹肉", "unit": "公斤", "q0": 20.0, "q1": 0.0, "s0": 5000, "s1": 0, "diff": -5000, "attr": "部份停購", "price": 0}, {"item": "燒海苔對切", "unit": "包", "q0": 5.0, "q1": 10.0, "s0": 2350, "s1": 4700, "diff": 2350, "attr": "增量", "price": 0}, {"item": "8切燒海苔", "unit": "包", "q0": 5.0, "q1": 20.0, "s0": 2425, "s1": 9700, "diff": 7275, "attr": "增量", "price": 0}]}, {"rep": "楊正國", "c": "台灣善商", "s0": 194700, "s1": 170100, "diff": -24600, "status": "下滑", "first": false, "last": "2026/10/08", "items": [{"item": "大目鮪魚赤身切板(40上)", "unit": "公斤", "q0": 230.0, "q1": 210.0, "s0": 158700, "s1": 144900, "diff": -13800, "attr": "減量", "price": 0}, {"item": "長鰭鮪LOIN", "unit": "公斤", "q0": 100.0, "q1": 70.0, "s0": 36000, "s1": 25200, "diff": -10800, "attr": "減量", "price": 0}]}, {"rep": "陳彥竹", "c": "劉家淮魯", "s0": 24205, "s1": 0, "diff": -24205, "status": "停單", "first": false, "last": "2026/09/01", "items": [{"item": "大比目魚2/3", "unit": "公斤", "q0": 45.67, "q1": 0.0, "s0": 24205, "s1": 0, "diff": -24205, "attr": "全數停購", "price": 0}]}, {"rep": "呂紀萱", "c": "建榮冷凍食品", "s0": 13000, "s1": 0, "diff": -13000, "status": "停單", "first": false, "last": "2026/05/20", "items": [{"item": "土魠魚5公斤上", "unit": "公斤", "q0": 50.0, "q1": 0.0, "s0": 13000, "s1": 0, "diff": -13000, "attr": "全數停購", "price": 0}]}, {"rep": "呂紀萱", "c": "里歐富得", "s0": 12000, "s1": 0, "diff": -12000, "status": "停單", "first": false, "last": "2026/09/14", "items": [{"item": "鮪魚鬆(業務用)", "unit": "公斤", "q0": 36.0, "q1": 0.0, "s0": 12000, "s1": 0, "diff": -12000, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "佳鮮國際", "s0": 11004, "s1": 0, "diff": -11004, "status": "停單", "first": false, "last": "2026/10/07", "items": [{"item": "白鯧800/900", "unit": "公斤", "q0": 10.48, "q1": 0.0, "s0": 11004, "s1": 0, "diff": -11004, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "大富開發", "s0": 15000, "s1": 5000, "diff": -10000, "status": "下滑", "first": false, "last": "2026/10/07", "items": [{"item": "炙燒鰹魚", "unit": "公斤", "q0": 30.0, "q1": 10.0, "s0": 15000, "s1": 5000, "diff": -10000, "attr": "減量", "price": 0}]}, {"rep": "邱意涵", "c": "偉儒國際", "s0": 6773, "s1": 0, "diff": -6773, "status": "停單", "first": false, "last": "2026/09/30", "items": [{"item": "B生凍櫻花蝦", "unit": "公斤", "q0": 10.0, "q1": 0.0, "s0": 6773, "s1": 0, "diff": -6773, "attr": "全數停購", "price": 0}]}, {"rep": "陳彥竹", "c": "鉑金溫泉事業", "s0": 6295, "s1": 0, "diff": -6295, "status": "停單", "first": false, "last": "2026/10/01", "items": [{"item": "牡蠣肉 2L", "unit": "公斤", "q0": 6.0, "q1": 0.0, "s0": 3420, "s1": 0, "diff": -3420, "attr": "全數停購", "price": 0}, {"item": "生白蝦21/25", "unit": "盒", "q0": 5.0, "q1": 0.0, "s0": 1375, "s1": 0, "diff": -1375, "attr": "全數停購", "price": 0}, {"item": "軟殼蟹 8P", "unit": "盒", "q0": 2.0, "q1": 0.0, "s0": 780, "s1": 0, "diff": -780, "attr": "全數停購", "price": 0}, {"item": "軟殼蟹 6P", "unit": "盒", "q0": 2.0, "q1": 0.0, "s0": 720, "s1": 0, "diff": -720, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "天海漁業", "s0": 4500, "s1": 0, "diff": -4500, "status": "停單", "first": false, "last": "2026/08/26", "items": [{"item": "薄鹽鯖魚切片4L", "unit": "公斤", "q0": 12.0, "q1": 0.0, "s0": 4500, "s1": 0, "diff": -4500, "attr": "全數停購", "price": 0}]}, {"rep": "楊正國", "c": "君臨商行", "s0": 4221, "s1": 2814, "diff": -1407, "status": "下滑", "first": false, "last": "2026/10/08", "items": [{"item": "B生凍櫻花蝦", "unit": "公斤", "q0": 6.0, "q1": 4.0, "s0": 4221, "s1": 2814, "diff": -1407, "attr": "減量", "price": 0}]}, {"rep": "陳彥竹", "c": "閎洋貿易", "s0": 0, "s1": 100000, "diff": 100000, "status": "新出貨", "first": false, "last": "2026/09/24", "items": [{"item": "鮪魚碎肉-無CO", "unit": "公斤", "q0": 0.0, "q1": 2000.0, "s0": 0, "s1": 100000, "diff": 100000, "attr": "新出貨客戶", "price": 0}]}], "cust_lw": 16, "cust_tw": 6}, "exclude": ["辦公經費", "零售", "呂友助", "正洋電商", "業務 黃啓靖"]};
 const H = DATA.head, PV = DATA.pv;
 let rep = "全部", attr = null;
 
@@ -161,21 +162,22 @@ function renderPV(){
   const priceTot = items.reduce((a,x) => a + x.price, 0);
   const amt = a => items.filter(x => x.attr === a).reduce((s,x) => s + x.diff - x.price, 0);
   const cnt = a => items.filter(x => x.attr === a).length;
-  const pct = v => total ? (v/total*100).toFixed(1) + "%" : "—";
-  const stopped = rows.filter(r => r.stopped);
-  const stopAmt = stopped.reduce((s,r)=>s+r.diff,0);
+  const stTag = r => r.status === "新出貨" ? (r.first ? tag("首次交易") : tag("新出貨")) : r.status === "持平" ? "" : tag(r.status);
 
-  // 摘要說明
-  const all = PV.rows, allItems = all.flatMap(r=>r.items), allTot = allItems.reduce((a,x)=>a+x.diff,0);
-  const stopOf = a => allItems.filter(x=>x.attr===a).reduce((s,x)=>s+x.diff,0);
-  const allStop = stopOf("全數停購") + stopOf("部份停購");
-  const allPrice = allItems.reduce((a,x)=>a+x.price,0);
-  const top = all[0];
+  // 摘要說明（全部業務）
+  const all = PV.rows, allItems = all.flatMap(r=>r.items);
+  const grp = f => { const l = all.filter(f); return [l.length, l.reduce((s,r)=>s+r.diff,0), l]; };
+  const [nDown, vDown] = grp(r => r.diff < 0), [nStop] = grp(r => r.status === "停單");
+  const [nUp, vUp] = grp(r => r.status === "成長"), [nNew, vNew, lNew] = grp(r => r.status === "新出貨");
+  const firsts = lNew.filter(r => r.first);
+  const net = all.reduce((s,r)=>s+r.diff,0), allPrice = allItems.reduce((a,x)=>a+x.price,0);
+  const stopV = allItems.filter(x=>x.attr==="全數停購"||x.attr==="部份停購").reduce((s,x)=>s+x.diff,0);
   document.getElementById("pvLead").innerHTML = all.length ?
-    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家。銷售額下滑的客戶共 <strong>${all.length}</strong> 家，合計減少 <strong>${wan(-allTot)} 萬</strong>；
-     其中停購品項佔 <strong>${allTot?(allStop/allTot*100).toFixed(0):0}%</strong>（全數停購 ${wan(-stopOf("全數停購"))} 萬、部份停購 ${wan(-stopOf("部份停購"))} 萬），價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。
-     下滑最多的是 <strong>${esc(top.c)}</strong>（${esc(top.rep)}），減少 ${wan(-top.diff)} 萬。`
-    : "本週沒有銷售額下滑的客戶。";
+    `本週出貨客戶 <strong>${PV.cust_tw}</strong> 家，上週 <strong>${PV.cust_lw}</strong> 家；兩週有交易的客戶共 <strong>${all.length}</strong> 家，淨變化 <strong>${net<0?"":"+"}${wan(net)} 萬</strong>。<br>
+     銷售額下滑 <strong>${nDown}</strong> 家，合計減少 <strong>${wan(-vDown)} 萬</strong>（其中整週停單 ${nStop} 家；停購品項佔下滑 ${vDown?(stopV/vDown*100).toFixed(0):0}%）；
+     成長 <strong>${nUp}</strong> 家，增加 ${wan(vUp)} 萬；新出貨 <strong>${nNew}</strong> 家，增加 ${wan(vNew)} 萬${firsts.length?`，其中首次交易：${firsts.map(r=>`<strong>${esc(r.c)}</strong>（${esc(r.rep)}，${wan(r.s1)} 萬）`).join("、")}`:""}。
+     價格影響 ${allPrice===0?"為 0（同品項單價未變動）":wan(allPrice)+" 萬"}。`
+    : "本週與上週都沒有交易客戶。";
 
   // 業務篩選
   const f = document.getElementById("repFilter");
@@ -183,16 +185,17 @@ function renderPV(){
   f.onclick = e => { const b = e.target.closest("button"); if(!b) return; rep = b.dataset.rep; renderPV(); };
 
   // 歸因彙總（點選列可在右方篩選客戶）
+  const ATTRS = ["全數停購","部份停購","減量","增量","新增品項","新出貨客戶"];
   const matchItem = (x,a) => a === "價格變動" ? (x.q0 > 0 && x.q1 > 0) : x.attr === a;
   const custOf = a => rows.filter(r => r.items.some(x => matchItem(x,a)));
   const row = (a,n,v) => `<tr data-attr="${a}" tabindex="0" role="button" aria-pressed="${attr===a}">
-    <td>${tag(a)}</td><td class="num">${custOf(a).length}</td><td class="num">${n}</td><td class="num">${sgn(v)}</td><td class="num">${pct(v)}</td></tr>`;
-  let s = `<thead><tr><th>歸因</th><th class="num">家數</th><th class="num">品項數</th><th class="num">變化金額</th><th class="num">佔比</th></tr></thead><tbody>`;
-  ["全數停購","部份停購","減量","增量","新增品項"].forEach(a => s += row(a, cnt(a), amt(a)));
+    <td>${tag(a)}</td><td class="num">${custOf(a).length}</td><td class="num">${n}</td><td class="num">${sgn(v)}</td></tr>`;
+  let s = `<thead><tr><th>歸因</th><th class="num">家數</th><th class="num">品項數</th><th class="num">變化金額</th></tr></thead><tbody>`;
+  ATTRS.forEach(a => s += row(a, cnt(a), amt(a)));
   s += row("價格變動", items.filter(x=>x.q0>0&&x.q1>0).length, priceTot);
-  s += `<tr class="total"><td>合計</td><td class="num">${rows.length}</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td><td class="num">${total?"100.0%":"—"}</td></tr></tbody>`;
+  s += `<tr class="total"><td>淨變化</td><td class="num">${rows.length}</td><td class="num">${items.length}</td><td class="num">${sgn(total)}</td></tr></tbody>`;
   const ps = document.getElementById("pvSum");
-  ps.innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有銷售額下滑的客戶。</td></tr></tbody>`;
+  ps.innerHTML = rows.length ? s : `<tbody><tr><td class="empty">沒有交易客戶。</td></tr></tbody>`;
   const pickAttr = tr => { if (!tr) return; attr = attr === tr.dataset.attr ? null : tr.dataset.attr; renderPV(); };
   ps.onclick = e => pickAttr(e.target.closest("tr[data-attr]"));
   ps.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickAttr(e.target.closest("tr[data-attr]")); } };
@@ -206,7 +209,7 @@ function renderPV(){
     const sorted = [...list].sort((a,b) => Math.abs(val(b))-Math.abs(val(a)));
     c = `<caption class="cap">${tag(attr)}　共 <strong>${list.length}</strong> 家客戶<button type="button" id="clearAttr">顯示全部</button></caption>
       <thead><tr><th>客戶</th><th>業務</th><th>品項</th><th class="num">${esc(attr)}金額</th></tr></thead><tbody>`;
-    sorted.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td>
+    sorted.forEach(r => c += `<tr><td>${esc(r.c)} ${stTag(r)}</td><td>${esc(r.rep)}</td>
       <td>${part(r).map(x=>esc(x.item)).join("、")}</td><td class="num">${sgn(val(r))}</td></tr>`);
     const tv = sorted.reduce((s,r)=>s+val(r),0);
     c += sorted.length ? `<tr class="total"><td>合計 ${sorted.length} 家</td><td></td><td></td><td class="num">${sgn(tv)}</td></tr>`
@@ -214,11 +217,11 @@ function renderPV(){
   } else {
     c = `<caption class="cap">點選左方歸因，可篩選出相關客戶</caption>
       <thead><tr><th>客戶</th><th>業務</th><th class="num">上週</th><th class="num">本週</th><th class="num">變化</th><th class="num">%</th></tr></thead><tbody>`;
-    rows.forEach(r => c += `<tr><td>${esc(r.c)}${r.stopped?` ${tag("停單")}`:""}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
+    rows.forEach(r => c += `<tr><td>${esc(r.c)} ${stTag(r)}</td><td>${esc(r.rep)}</td><td class="num">${yuan(r.s0)}</td>
       <td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td class="num">${chg(pctTxt(r.s1,r.s0))}</td></tr>`);
     if (rows.length) {
       const s0=rows.reduce((a,r)=>a+r.s0,0), s1=rows.reduce((a,r)=>a+r.s1,0);
-      c += `<tr class="total"><td>合計 ${rows.length} 家（整週停單 ${stopped.length} 家）</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
+      c += `<tr class="total"><td>合計 ${rows.length} 家</td><td></td><td class="num">${yuan(s0)}</td><td class="num">${yuan(s1)}</td><td class="num">${sgn(s1-s0)}</td><td class="num">${chg(pctTxt(s1,s0))}</td></tr>`;
     }
   }
   document.getElementById("custSum").innerHTML = c + "</tbody>";
@@ -230,23 +233,24 @@ function renderPV(){
     <th class="num">上週金額</th><th class="num">本週金額</th>
     <th class="num">變化金額</th><th>歸因</th></tr></thead><tbody>`;
   rows.forEach(r => {
-    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong>`:""}</td><td>${i===0?esc(r.rep):""}</td>
+    r.items.forEach((x,i) => h += `<tr class="${i===0?"cust-first":""}"><td>${i===0?`<strong>${esc(r.c)}</strong> ${stTag(r)}`:""}</td><td>${i===0?esc(r.rep):""}</td>
       <td>${esc(x.item)}</td><td class="num">${x.q0?num(x.q0)+" "+esc(x.unit):"—"}</td><td class="num">${x.q1?num(x.q1)+" "+esc(x.unit):"—"}</td>
       <td class="num">${yuan(x.s0)}</td><td class="num">${yuan(x.s1)}</td>
       <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
     if (r.items.length > 1) h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
       <td class="num">${yuan(r.s0)}</td><td class="num">${yuan(r.s1)}</td><td class="num">${sgn(r.diff)}</td><td></td></tr>`;
   });
-  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有銷售額下滑的客戶。</td></tr>`;
+  if (!rows.length) h += `<tr><td colspan="9" class="empty">沒有交易客戶。</td></tr>`;
   document.getElementById("pvTbl").innerHTML = h + "</tbody>";
 }
 
 function renderFoot(){
   document.getElementById("foot").innerHTML = `
     <p>第 1、2 段為全體內銷銷售額；第 3 段排除：${DATA.exclude.map(esc).join("、")}。</p>
-    <p>本週、上週各為截止日往前 7 天；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>本週、上週為完整一週（週一～週五），取截止日當天或之前最近的週五為本週結束日；本月累計為當月 1 日至截止日。完成率＝本月累計÷${esc(H.target_basis)}，進度條上的直線為時間進度。</p>
+    <p>客戶動態列出本週或上週有交易的全部客戶，依變化金額由減少到增加排序；標籤：停單＝本週完全沒出貨、下滑、成長、新出貨＝上週沒出貨本週有出貨（首次交易＝過去從未交易）。</p>
     <p>點選歸因彙總中的任一列，右方會列出有該歸因品項的客戶；再點一次或按「顯示全部」可取消。價格變動列出兩週都有購買同品項的客戶。</p>
-    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝本週才買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價變動的影響彙總於歸因表的「價格變動」列。</p>`;
+    <p>價量分析：全數停購＝客戶本週完全沒出貨，上週買的品項都算在這裡；部份停購＝客戶本週仍有出貨，但某些上週有買的品項沒再買；減量＝同品項少買；新增品項＝老客戶本週多買的新品項；新出貨客戶＝上週整週沒出貨的客戶本週買的品項；增量＝同品項多買。價格變動＝（本週單價－上週單價）×本週量，只計兩週都有買的品項，減量金額已扣除價格影響。單價變動的影響彙總於歸因表的「價格變動」列。</p>`;
 }
 
 renderHead(); renderPV(); renderFoot();
