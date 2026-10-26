@@ -156,6 +156,13 @@ function renderHead(){
 const REPS = [...new Set(PV.rows.map(r => r.rep))]
   .sort((a,b) => PV.rows.filter(r=>r.rep===a).reduce((s,r)=>s+r.diff,0) - PV.rows.filter(r=>r.rep===b).reduce((s,r)=>s+r.diff,0));
 
+// 出貨量依單位分開加總，例如「405.5 公斤」或「6 公斤<br>9 盒」
+function qsum(its, k){
+  const m = new Map();
+  its.forEach(x => { if (x[k]) m.set(x.unit, (m.get(x.unit) || 0) + x[k]); });
+  return m.size ? [...m].map(([u,v]) => `${num(Math.round(v*100)/100)} ${esc(u)}`).join("<br>") : "—";
+}
+
 function renderPV(){
   const rows = rep === "全部" ? PV.rows : PV.rows.filter(r => r.rep === rep);
   const items = rows.flatMap(r => r.items);
@@ -252,10 +259,17 @@ function renderPV(){
       <td class="num">${sgn(x.diff)}</td><td>${tag(x.attr)}</td></tr>`);
     if (its.length > 1) {
       const a0=its.reduce((s,x)=>s+x.s0,0), a1=its.reduce((s,x)=>s+x.s1,0);
-      h += `<tr class="sub"><td></td><td></td><td>小計</td><td></td><td></td>
+      h += `<tr class="sub"><td></td><td></td><td>小計</td><td class="num">${qsum(its,"q0")}</td><td class="num">${qsum(its,"q1")}</td>
       <td class="num">${yuan(a0)}</td><td class="num">${yuan(a1)}</td><td class="num">${sgn(a1-a0)}</td><td></td></tr>`;
     }
   });
+  const allIts = dRows.flatMap(dItems);
+  if (allIts.length > 1) {
+    const b0=allIts.reduce((s,x)=>s+x.s0,0), b1=allIts.reduce((s,x)=>s+x.s1,0);
+    h += `<tr class="total"><td>合計 ${dRows.length} 家</td><td></td><td>${allIts.length} 個品項</td>
+      <td class="num">${qsum(allIts,"q0")}</td><td class="num">${qsum(allIts,"q1")}</td>
+      <td class="num">${yuan(b0)}</td><td class="num">${yuan(b1)}</td><td class="num">${sgn(b1-b0)}</td><td></td></tr>`;
+  }
   if (!dRows.length) h += `<tr><td colspan="9" class="empty">${attr ? "沒有屬於這個歸因的品項。" : "沒有交易客戶。"}</td></tr>`;
   document.getElementById("pvTbl").innerHTML = h + "</tbody>";
   document.querySelectorAll(".clearAttr2").forEach(b => b.onclick = () => { attr = null; renderPV(); });
